@@ -33,7 +33,13 @@ Second, run the development server using one of the following commands:
 
 ```bash
 npm run android
+```
+
+```bash
 npm run ios
+```
+
+```bash
 npm run web
 ```
 
