@@ -29,10 +29,12 @@ First, install the dependencies of RecycleVision:
 npm i
 ```
 
-Second, run the development server:
+Second, run the development server using one of the following commands:
 
 ```bash
-npm run dev
+npm run android
+npm run ios
+npm run web
 ```
 
 ## Usage
