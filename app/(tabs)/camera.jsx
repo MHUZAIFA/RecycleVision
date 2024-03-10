@@ -1,78 +1,111 @@
-import { Camera, CameraType } from 'expo-camera';
-import React, { useRef, useState } from 'react';
-import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Camera, CameraType } from "expo-camera";
+import { SaveFormat, manipulateAsync } from "expo-image-manipulator";
+import { useRef, useState } from "react";
+import { Pressable, Text, View } from "react-native";
 
 export default function CameraScreen() {
   const [type, setType] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
+  const [label, setLabel] = useState(null);
+  const [confidence, setConfidence] = useState(null);
   const cameraRef = useRef(null);
 
-  const takePicture = async () => {
-    if (cameraRef.current) {
-      const { uri } = await cameraRef.current.takePictureAsync();
-      console.log('Picture taken:', uri);
-      // You can do something with the picture URI here, like save it or display it
-    }
-  };
-
   if (!permission) {
-    // Camera permissions are still loading
     return <View />;
   }
 
   if (!permission.granted) {
-    // Camera permissions are not granted yet
     return (
-      <View style={styles.container}>
-        <Text style={{ textAlign: 'center' }}>We need your permission to show the camera</Text>
-        <Button onPress={requestPermission} title="grant permission" />
+      <View className="flex-1 items-center justify-center">
+        <Text className="text-center">
+          We need your permission to show the camera
+        </Text>
+        <Pressable
+          className="bg-blue-500 py-2 px-4 rounded"
+          onPress={requestPermission}>
+          <Text className="text-white font-bold">Grant Permission</Text>
+        </Pressable>
       </View>
     );
   }
 
   function toggleCameraType() {
-    setType((current) => (current === CameraType.back ? CameraType.front : CameraType.back));
+    setType((current) =>
+      current === CameraType.back ? CameraType.front : CameraType.back
+    );
   }
 
+  const detectImage = async () => {
+    if (cameraRef.current) {
+      const pic = await cameraRef.current?.takePictureAsync({
+        base64: true,
+        fixOrientation: true,
+      });
+      const resizedPic = await manipulateAsync(
+        pic.uri,
+        [{ resize: { width: 224, height: 224 } }],
+        { compress: 0.4, format: SaveFormat.JPEG, base64: true }
+      );
+      const response = await fetch(resizedPic.uri);
+      const blob = await response.blob();
+      const arrayBuffer = await new Response(blob).arrayBuffer();
+      sendImageToModel(arrayBuffer);
+    }
+  };
+
+  const sendImageToModel = async (arrayBuffer) => {
+    try {
+      const result = await fetch(
+        "https://api-inference.huggingface.co/models/plsakr/vit-garbage-classification-v2",
+        {
+          headers: {
+            Authorization: "Bearer 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",
+          },
+          method: "POST",
+          body: arrayBuffer,
+        }
+      );
+      const resultJson = await result.json();
+      const { label, score } = resultJson[0];
+      label && setLabel(label);
+      score && setConfidence(Math.round(score.toFixed(2) * 100));
+    } catch (e) {
+      console.log("Failed", e);
+    }
+  };
+
+  setTimeout(() => {
+    setLabel(null);
+    setConfidence(null);
+  }, 3000);
+
   return (
-    <View style={styles.container}>
-      <Camera style={styles.camera} type={type} ref={cameraRef}>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={toggleCameraType}>
-            <Text style={styles.text}>Flip Camera</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={takePicture}>
-            <Text style={styles.text}>Take Picture</Text>
-          </TouchableOpacity>
+    <View className="flex-1">
+      <Camera
+        className="flex-1"
+        type={type}
+        autoFocus={Camera.Constants.AutoFocus.on}
+        ref={cameraRef}>
+        <View className="flex-1 flex-row bg-transparent mx-16 justify-between items-end">
+          <Pressable
+            className="flex-1 items-center justify-end mb-10"
+            onPress={toggleCameraType}>
+            <Text className="text-white font-bold text-2xl">Flip Camera</Text>
+          </Pressable>
+          <Pressable
+            className="flex-1 items-center justify-end mb-10"
+            onPress={detectImage}>
+            <Text className="text-white font-bold text-2xl">Take Picture</Text>
+          </Pressable>
         </View>
       </Camera>
+      {label && confidence && (
+        <View className="absolute top-1/2 left-0 right-0 h-12 -mt-6 flex items-center justify-center bg-black bg-opacity-50 px-4">
+          <Text className="text-white font-bold text-2xl">
+            {label} - {confidence}%
+          </Text>
+        </View>
+      )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  camera: {
-    flex: 1,
-  },
-  buttonContainer: {
-    flex: 1,
-    flexDirection: 'row',
-    backgroundColor: 'transparent',
-    margin: 64,
-    justifyContent: 'space-between',
-  },
-  button: {
-    flex: 1,
-    alignSelf: 'flex-end',
-    alignItems: 'center',
-  },
-  text: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: 'white',
-  },
-});

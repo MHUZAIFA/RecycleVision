@@ -1,6 +1,5 @@
-import React from 'react';
-import { LineChart } from 'react-native-chart-kit';
-import { LineData } from '../../assets/data/info';
+import { LineChart } from "react-native-chart-kit";
+import { LineData } from "../../assets/data/info";
 
 const LineGraph = () => {
   return (
@@ -9,8 +8,8 @@ const LineGraph = () => {
       width={350}
       height={220}
       chartConfig={{
-        backgroundGradientFrom: '#F08F5F',
-        backgroundGradientTo: '#F08F5F',
+        backgroundGradientFrom: "#F08F5F",
+        backgroundGradientTo: "#F08F5F",
         color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
         style: {
           borderRadius: 16,
