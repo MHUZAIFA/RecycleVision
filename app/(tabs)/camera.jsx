@@ -1,25 +1,30 @@
 import { Camera, CameraType } from "expo-camera";
 import { SaveFormat, manipulateAsync } from "expo-image-manipulator";
 import { useRef, useState } from "react";
-import { Button, Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 
 export default function CameraScreen() {
   const [type, setType] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
-  const [detectedLabel, setDetectedLabel] = useState(null);
+  const [label, setLabel] = useState(null);
   const [confidence, setConfidence] = useState(null);
   const cameraRef = useRef(null);
 
   if (!permission) {
     return <View />;
   }
+
   if (!permission.granted) {
     return (
-      <View style={styles.container}>
-        <Text style={{ textAlign: "center" }}>
+      <View className="flex-1 items-center justify-center">
+        <Text className="text-center">
           We need your permission to show the camera
         </Text>
-        <Button onPress={requestPermission} title="grant permission" />
+        <Pressable
+          className="bg-blue-500 py-2 px-4 rounded"
+          onPress={requestPermission}>
+          <Text className="text-white font-bold">Grant Permission</Text>
+        </Pressable>
       </View>
     );
   }
@@ -62,7 +67,7 @@ export default function CameraScreen() {
       );
       const resultJson = await result.json();
       const { label, score } = resultJson[0];
-      label && setDetectedLabel(label);
+      label && setLabel(label);
       score && setConfidence(Math.round(score.toFixed(2) * 100));
     } catch (e) {
       console.log("Failed", e);
@@ -70,72 +75,37 @@ export default function CameraScreen() {
   };
 
   setTimeout(() => {
-    setDetectedLabel(null);
+    setLabel(null);
     setConfidence(null);
-  }, 5000);
+  }, 3000);
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1">
       <Camera
-        style={styles.camera}
+        className="flex-1"
         type={type}
         autoFocus={Camera.Constants.AutoFocus.on}
         ref={cameraRef}>
-        <View style={styles.buttonContainer}>
-          <Pressable style={styles.button} onPress={toggleCameraType}>
-            <Text style={styles.text}>Flip Camera</Text>
+        <View className="flex-1 flex-row bg-transparent mx-16 justify-between items-end">
+          <Pressable
+            className="flex-1 items-center justify-end mb-10"
+            onPress={toggleCameraType}>
+            <Text className="text-white font-bold text-2xl">Flip Camera</Text>
           </Pressable>
-          <Pressable style={styles.button} onPress={detectImage}>
-            <Text style={styles.text}>Take Picture</Text>
+          <Pressable
+            className="flex-1 items-center justify-end mb-10"
+            onPress={detectImage}>
+            <Text className="text-white font-bold text-2xl">Take Picture</Text>
           </Pressable>
         </View>
       </Camera>
-      {detectedLabel && confidence && (
-        <View style={styles.resultContainer}>
-          <Text style={styles.text}>
-            {detectedLabel} - {confidence}%
+      {label && confidence && (
+        <View className="absolute top-1/2 left-0 right-0 h-12 -mt-6 flex items-center justify-center bg-black bg-opacity-50 px-4">
+          <Text className="text-white font-bold text-2xl">
+            {label} - {confidence}%
           </Text>
         </View>
       )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-  },
-  camera: {
-    flex: 1,
-  },
-  buttonContainer: {
-    flex: 1,
-    flexDirection: "row",
-    backgroundColor: "transparent",
-    margin: 64,
-    justifyContent: "space-between",
-  },
-  button: {
-    flex: 1,
-    alignSelf: "flex-end",
-    alignItems: "center",
-  },
-  text: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "white",
-  },
-  resultContainer: {
-    position: "absolute",
-    top: "50%",
-    left: 0,
-    right: 0,
-    height: 50,
-    marginTop: -25,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
-    padding: 16,
-  },
-});
