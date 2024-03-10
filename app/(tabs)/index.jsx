@@ -7,7 +7,7 @@ export default function Tab() {
   return (
     <View style={{ flex: 0.5, flexDirection: 'column', marginHorizontal: 20, gap: 10 }}>
       <View style={{ justifyContent: 'center', flex: 0.5, flexDirection: 'column' }}>
-        <Text style={{ fontSize: 28, fontWeight: 'bold' }}>Hello</Text>
+        <Text style={{ fontSize: 28, fontWeight: 'bold' }}>Hello 👋</Text>
         <Text style={{ fontSize: 14 }}>John Doe</Text>
       </View>
       <Text style={{ fontStyle: 'italic', color: 'gray', fontSize: 16 }}>Your Dashboard</Text>
