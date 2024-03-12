@@ -1,13 +1,14 @@
 import { Camera, CameraType } from "expo-camera";
 import { SaveFormat, manipulateAsync } from "expo-image-manipulator";
 import { useRef, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, Text, View, ActivityIndicator } from "react-native";
 
 export default function CameraScreen() {
   const [type, setType] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const [label, setLabel] = useState(null);
   const [confidence, setConfidence] = useState(null);
+  const [isLoading, setIsLoading] = useState(false); // New state for loading
   const cameraRef = useRef(null);
 
   if (!permission) {
@@ -36,6 +37,7 @@ export default function CameraScreen() {
   }
 
   const detectImage = async () => {
+    setIsLoading(true); // Set loading to true before processing the image
     if (cameraRef.current) {
       const pic = await cameraRef.current?.takePictureAsync({
         base64: true,
@@ -71,6 +73,8 @@ export default function CameraScreen() {
       score && setConfidence(Math.round(score.toFixed(2) * 100));
     } catch (e) {
       console.log("Failed", e);
+    } finally {
+      setIsLoading(false); // Set loading to false after processing the image
     }
   };
 
@@ -99,6 +103,11 @@ export default function CameraScreen() {
           </Pressable>
         </View>
       </Camera>
+      {isLoading && (
+        <View className="absolute top-1/2 left-0 right-0 h-12 -mt-6 flex items-center justify-center bg-black bg-opacity-50 px-4">
+          <ActivityIndicator size="large" color="#00ff00" /> {/* Loading indicator */}
+        </View>
+      )}
       {label && confidence && (
         <View className="absolute top-1/2 left-0 right-0 h-12 -mt-6 flex items-center justify-center bg-black bg-opacity-50 px-4">
           <Text className="text-white font-bold text-2xl">
