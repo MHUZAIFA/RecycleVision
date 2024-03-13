@@ -8,7 +8,11 @@ module.exports = {
     "../../libs/ui/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        progress: "#6342E8",
+      },
+    },
   },
   plugins: [nativewind],
 };
