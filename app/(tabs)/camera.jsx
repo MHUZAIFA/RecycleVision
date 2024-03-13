@@ -8,6 +8,7 @@ export default function CameraScreen() {
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const [label, setLabel] = useState(null);
   const [confidence, setConfidence] = useState(null);
+  const [error, setError] = useState(null);
   const cameraRef = useRef(null);
 
   if (!permission) {
@@ -37,19 +38,24 @@ export default function CameraScreen() {
 
   const detectImage = async () => {
     if (cameraRef.current) {
-      const pic = await cameraRef.current?.takePictureAsync({
-        base64: true,
-        fixOrientation: true,
-      });
-      const resizedPic = await manipulateAsync(
-        pic.uri,
-        [{ resize: { width: 224, height: 224 } }],
-        { compress: 0.4, format: SaveFormat.JPEG, base64: true }
-      );
-      const response = await fetch(resizedPic.uri);
-      const blob = await response.blob();
-      const arrayBuffer = await new Response(blob).arrayBuffer();
-      sendImageToModel(arrayBuffer);
+      try {
+        const pic = await cameraRef.current?.takePictureAsync({
+          base64: true,
+          fixOrientation: true,
+        });
+        const resizedPic = await manipulateAsync(
+          pic.uri,
+          [{ resize: { width: 224, height: 224 } }],
+          { compress: 0.4, format: SaveFormat.JPEG, base64: true }
+        );
+        const response = await fetch(resizedPic.uri);
+        const blob = await response.blob();
+        const arrayBuffer = await new Response(blob).arrayBuffer();
+        sendImageToModel(arrayBuffer);
+      } catch (e) {
+        setError("An error occurred while capturing the image. Please try again.");
+        console.log("Failed", e);
+      }
     }
   };
 
@@ -70,6 +76,7 @@ export default function CameraScreen() {
       label && setLabel(label);
       score && setConfidence(Math.round(score.toFixed(2) * 100));
     } catch (e) {
+      setError("An error occurred while processing the image. Please try again.");
       console.log("Failed", e);
     }
   };
@@ -77,6 +84,7 @@ export default function CameraScreen() {
   setTimeout(() => {
     setLabel(null);
     setConfidence(null);
+    setError(null);
   }, 3000);
 
   return (
@@ -99,6 +107,11 @@ export default function CameraScreen() {
           </Pressable>
         </View>
       </Camera>
+      {error && (
+        <View className="absolute top-1/2 left-0 right-0 h-12 -mt-6 flex items-center justify-center bg-red-500 px-4">
+          <Text className="text-white font-bold text-2xl">{error}</Text>
+        </View>
+      )}
       {label && confidence && (
         <View className="absolute top-1/2 left-0 right-0 h-12 -mt-6 flex items-center justify-center bg-black bg-opacity-50 px-4">
           <Text className="text-white font-bold text-2xl">
