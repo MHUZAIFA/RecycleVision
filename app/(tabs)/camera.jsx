@@ -1,7 +1,7 @@
 import { Camera, CameraType } from "expo-camera";
 import { SaveFormat, manipulateAsync } from "expo-image-manipulator";
 import { useRef, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, Text, View, ActivityIndicator } from "react-native";
 
 export default function CameraScreen() {
   const [type, setType] = useState(CameraType.back);
@@ -9,6 +9,7 @@ export default function CameraScreen() {
   const [label, setLabel] = useState(null);
   const [confidence, setConfidence] = useState(null);
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false); // New state for loading
   const cameraRef = useRef(null);
 
   if (!permission) {
@@ -37,6 +38,7 @@ export default function CameraScreen() {
   }
 
   const detectImage = async () => {
+    setIsLoading(true); // Set loading to true before processing the image
     if (cameraRef.current) {
       try {
         const pic = await cameraRef.current?.takePictureAsync({
@@ -78,6 +80,8 @@ export default function CameraScreen() {
     } catch (e) {
       setError("An error occurred while processing the image. Please try again.");
       console.log("Failed", e);
+    } finally {
+      setIsLoading(false); // Set loading to false after processing the image
     }
   };
 
@@ -107,6 +111,11 @@ export default function CameraScreen() {
           </Pressable>
         </View>
       </Camera>
+      {isLoading && (
+        <View className="absolute top-1/2 left-0 right-0 h-12 -mt-6 flex items-center justify-center bg-black bg-opacity-50 px-4">
+          <ActivityIndicator size="large" color="#808080" /> {/* Loading indicator */}
+        </View>
+      )}
       {error && (
         <View className="absolute top-1/2 left-0 right-0 h-12 -mt-6 flex items-center justify-center bg-red-500 px-4">
           <Text className="text-white font-bold text-2xl">{error}</Text>
