@@ -1,7 +1,7 @@
 import { Camera, CameraType } from "expo-camera";
 import { SaveFormat, manipulateAsync } from "expo-image-manipulator";
 import { useRef, useState } from "react";
-import { Pressable, Text, View, ActivityIndicator } from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
 export default function CameraScreen() {
   const [type, setType] = useState(CameraType.back);
@@ -55,7 +55,9 @@ export default function CameraScreen() {
         const arrayBuffer = await new Response(blob).arrayBuffer();
         sendImageToModel(arrayBuffer);
       } catch (e) {
-        setError("An error occurred while capturing the image. Please try again.");
+        setError(
+          "An error occurred while capturing the image. Please try again."
+        );
         console.log("Failed", e);
       }
     }
@@ -78,7 +80,9 @@ export default function CameraScreen() {
       label && setLabel(label);
       score && setConfidence(Math.round(score.toFixed(2) * 100));
     } catch (e) {
-      setError("An error occurred while processing the image. Please try again.");
+      setError(
+        "An error occurred while processing the image. Please try again."
+      );
       console.log("Failed", e);
     } finally {
       setIsLoading(false); // Set loading to false after processing the image
@@ -113,7 +117,7 @@ export default function CameraScreen() {
       </Camera>
       {isLoading && (
         <View className="absolute top-1/2 left-0 right-0 h-12 -mt-6 flex items-center justify-center bg-black bg-opacity-50 px-4">
-          <ActivityIndicator size="large" color="#808080" /> {/* Loading indicator */}
+          <ActivityIndicator size="large" color="#808080" />
         </View>
       )}
       {error && (

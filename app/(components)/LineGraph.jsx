@@ -21,9 +21,9 @@ const LineGraph = () => {
         width={350}
         height={220}
         chartConfig={{
-          backgroundColor: "F9F6EE",
-          backgroundGradientFrom: "F9F6EE",
-          backgroundGradientTo: "F9F6EE",
+          backgroundColor: "#F9F6EE",
+          backgroundGradientFrom: "#F9F6EE",
+          backgroundGradientTo: "#F9F6EE",
           decimalPlaces: 0,
           color: (opacity = 1) => `rgba(99, 66, 232, ${opacity})`,
           labelColor: (opacity = 1) => `rgba(128, 128, 128, ${opacity})`,
