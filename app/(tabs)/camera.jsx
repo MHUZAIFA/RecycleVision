@@ -1,10 +1,10 @@
 import { Camera, CameraType } from "expo-camera";
 import { SaveFormat, manipulateAsync } from "expo-image-manipulator";
 import { useRef, useState } from "react";
-import { Pressable, Text, View, ActivityIndicator } from "react-native";
+import { Pressable, Text, View, ActivityIndicator, Animated } from "react-native";
 
 export default function CameraScreen() {
-  const [type, setType] = useState(CameraType.back);
+  const [type] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const [label, setLabel] = useState(null);
   const [confidence, setConfidence] = useState(null);
@@ -30,13 +30,6 @@ export default function CameraScreen() {
       </View>
     );
   }
-
-  function toggleCameraType() {
-    setType((current) =>
-      current === CameraType.back ? CameraType.front : CameraType.back
-    );
-  }
-
   const detectImage = async () => {
     setIsLoading(true); // Set loading to true before processing the image
     if (cameraRef.current) {
@@ -91,23 +84,51 @@ export default function CameraScreen() {
     setError(null);
   }, 3000);
 
+  const buttonSize = new Animated.Value(1);
+
+  const handlePressIn = () => {
+    Animated.spring(buttonSize, {
+      toValue: 0.9,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(buttonSize, {
+      toValue: 1,
+      friction: 3,
+      tension: 200,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const animatedStyle = {
+    transform: [{ scale: buttonSize }],
+  };
+
   return (
     <View className="flex-1">
       <Camera
         className="flex-1"
         type={type}
-        autoFocus={Camera.Constants.AutoFocus.on}
+        autoFocus="on"
         ref={cameraRef}>
         <View className="flex-1 flex-row bg-transparent mx-16 justify-between items-end">
           <Pressable
             className="flex-1 items-center justify-end mb-10"
-            onPress={toggleCameraType}>
-            <Text className="text-white font-bold text-2xl">Flip Camera</Text>
-          </Pressable>
-          <Pressable
-            className="flex-1 items-center justify-end mb-10"
+            onPressIn={handlePressIn}
+            onPressOut={handlePressOut}
             onPress={detectImage}>
-            <Text className="text-white font-bold text-2xl">Take Picture</Text>
+            <Animated.View style={[{
+              borderWidth: 5,
+              borderRadius: 75,
+              borderColor: 'rgba(255, 255, 255, 0.5)',
+              height: 75,
+              width: 75,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }, animatedStyle]} />
           </Pressable>
         </View>
       </Camera>
