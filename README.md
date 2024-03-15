@@ -32,6 +32,14 @@ npm i
 Second, run the development server using one of the following commands:
 
 ```bash
+npm run start
+```
+
+```bash
+npm run clean
+```
+
+```bash
 npm run android
 ```
 
