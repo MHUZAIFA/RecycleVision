@@ -1,3 +1,4 @@
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import {
   Dimensions,
   Image,
@@ -8,15 +9,14 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import LineGraph from "../(components)/LineGraph";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import PagerView from "react-native-pager-view";
-import BadgeBanner from "../(components)/BadgeBanner";
-import inner from "../../assets/inner.png";
-import icon from "../../assets/favicon.png";
-import AnalyticsBadge from "../(components)/AnalyticsBadge";
-import PieGraph from "../(components)/PieGraph";
 import { Bar } from "react-native-progress";
+import AnalyticsBadge from "../(components)/AnalyticsBadge";
+import BadgeBanner from "../(components)/BadgeBanner";
+import LineGraph from "../(components)/LineGraph";
+import PieGraph from "../(components)/PieGraph";
+import icon from "../../assets/favicon.png";
+import inner from "../../assets/inner.png";
 export default function Tab() {
   return (
     <SafeAreaView>

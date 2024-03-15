@@ -1,7 +1,13 @@
-import { Camera, CameraType } from "expo-camera";
+import { AutoFocus, Camera, CameraType } from "expo-camera";
 import { SaveFormat, manipulateAsync } from "expo-image-manipulator";
 import { useRef, useState } from "react";
-import { Pressable, Text, View, ActivityIndicator, Animated } from "react-native";
+import {
+  ActivityIndicator,
+  Animated,
+  Pressable,
+  Text,
+  View,
+} from "react-native";
 
 export default function CameraScreen() {
   const [type] = useState(CameraType.back);
@@ -48,7 +54,9 @@ export default function CameraScreen() {
         const arrayBuffer = await new Response(blob).arrayBuffer();
         sendImageToModel(arrayBuffer);
       } catch (e) {
-        setError("An error occurred while capturing the image. Please try again.");
+        setError(
+          "An error occurred while capturing the image. Please try again."
+        );
         console.log("Failed", e);
       }
     }
@@ -71,7 +79,9 @@ export default function CameraScreen() {
       label && setLabel(label);
       score && setConfidence(Math.round(score.toFixed(2) * 100));
     } catch (e) {
-      setError("An error occurred while processing the image. Please try again.");
+      setError(
+        "An error occurred while processing the image. Please try again."
+      );
       console.log("Failed", e);
     } finally {
       setIsLoading(false); // Set loading to false after processing the image
@@ -110,8 +120,8 @@ export default function CameraScreen() {
     <View className="flex-1">
       <Camera
         className="flex-1"
-        type={type}
-        autoFocus="on"
+        type={CameraType.back}
+        autoFocus={AutoFocus.on}
         ref={cameraRef}>
         <View className="flex-1 flex-row bg-transparent mx-16 justify-between items-end">
           <Pressable
@@ -119,22 +129,27 @@ export default function CameraScreen() {
             onPressIn={handlePressIn}
             onPressOut={handlePressOut}
             onPress={detectImage}>
-            <Animated.View style={[{
-              borderWidth: 5,
-              borderRadius: 75,
-              borderColor: 'rgba(255, 255, 255, 0.5)',
-              height: 75,
-              width: 75,
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-            }, animatedStyle]} />
+            <Animated.View
+              style={[
+                {
+                  borderWidth: 5,
+                  borderRadius: 75,
+                  borderColor: "rgba(255, 255, 255, 0.5)",
+                  height: 75,
+                  width: 75,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                },
+                animatedStyle,
+              ]}
+            />
           </Pressable>
         </View>
       </Camera>
       {isLoading && (
         <View className="absolute top-1/2 left-0 right-0 h-12 -mt-6 flex items-center justify-center bg-black bg-opacity-50 px-4">
-          <ActivityIndicator size="large" color="#808080" /> {/* Loading indicator */}
+          <ActivityIndicator size="large" color="#808080" />
         </View>
       )}
       {error && (
