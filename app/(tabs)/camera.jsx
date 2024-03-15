@@ -1,6 +1,7 @@
 import { AutoFocus, Camera, CameraType } from "expo-camera";
 import { SaveFormat, manipulateAsync } from "expo-image-manipulator";
 import { useRef, useState } from "react";
+
 import {
   ActivityIndicator,
   Animated,
@@ -10,7 +11,6 @@ import {
 } from "react-native";
 
 export default function CameraScreen() {
-  const [type] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const [label, setLabel] = useState(null);
   const [confidence, setConfidence] = useState(null);

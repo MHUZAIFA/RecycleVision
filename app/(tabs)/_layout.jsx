@@ -1,7 +1,7 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { Animated, View } from 'react-native';
-import React, { useRef, useEffect } from 'react';
+import { useEffect, useRef } from "react";
+import { Animated, View } from "react-native";
 
 export default function TabLayout() {
   return (
@@ -11,7 +11,13 @@ export default function TabLayout() {
         tabBarInactiveTintColor: "#808080",
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: '#fff',
+          backgroundColor: "#fff",
+          /** 
+           * to HIDE TAB BAR based on route e.g. index
+           height: route.name === "index" ? 0 : 60,
+           paddingTop: route.name === "index" ? 0 : 10,
+           paddingBottom: route.name === "index" ? 0 : 10,
+           */
           height: 60,
           paddingTop: 10,
           paddingBottom: 10,
@@ -28,22 +34,26 @@ export default function TabLayout() {
             }).start();
           }, [focused]);
 
-          if (route.name === 'camera') {
-            iconName = focused ? 'camera-iris' : 'camera';
-          } else if (route.name === 'index') {
-            iconName = focused ? 'home' : 'home-outline';
+          if (route.name === "camera") {
+            iconName = focused ? "camera" : "camera-outline";
+          } else if (route.name === "index") {
+            iconName = focused ? "home" : "home-outline";
           }
 
           return (
             <View>
               <Animated.View style={{ transform: [{ scale: scaleValue }] }}>
-                <MaterialCommunityIcons name={iconName} size={size} color={color} />
+                <MaterialCommunityIcons
+                  // @ts-ignore
+                  name={iconName}
+                  size={size}
+                  color={color}
+                />
               </Animated.View>
             </View>
           );
         },
-      })}
-    >
+      })}>
       <Tabs.Screen
         name="camera"
         options={{
