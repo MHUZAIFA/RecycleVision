@@ -8,11 +8,10 @@ const PieGraph = () => {
     <View className="w-[355px] h-[335px] flex flex-col rounded-xl border-2 border-gray-400">
       <View className="flex flex-row justify-between w-[100%] h-[33%] p-8">
         <View className="flex-col justify-center">
-          <Text className="text-xl">Overview</Text>
           <Text className="text-3xl font-semibold">23</Text>
           <Text className="text-sm text-gray-500">Types of Items Scanned</Text>
         </View>
-        <FontAwesome name="info-circle" size={24} color="black" />
+        <FontAwesome name="info-circle" size={26} color="black" />
       </View>
       <PieChart
         data={PieData}
