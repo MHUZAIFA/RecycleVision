@@ -1,17 +1,24 @@
+import {
+  deleteDatabase,
+  getLevel,
+  getNbrOfScans,
+  getStreak,
+} from "@/lib/gamification/dbUtils";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useEffect, useState } from "react";
 import {
   Alert,
   Dimensions,
   Image,
   ImageBackground,
-  SafeAreaView,
   Pressable,
+  SafeAreaView,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-// import PagerView from "react-native-pager-view";
+import PagerView from "react-native-pager-view";
 import { Bar } from "react-native-progress";
 import AnalyticsBadge from "../(components)/AnalyticsBadge";
 import BadgeBanner from "../(components)/BadgeBanner";
@@ -19,13 +26,6 @@ import LineGraph from "../(components)/LineGraph";
 import PieGraph from "../(components)/PieGraph";
 import icon from "../../assets/favicon.png";
 import inner from "../../assets/inner.png";
-import {
-  deleteDatabase,
-  getLevel,
-  getNbrOfScans,
-  getStreak,
-} from "@/lib/gamification/dbUtils";
-import { useEffect, useState } from "react";
 export default function Tab() {
   const [title, setTitle] = useState("Eco Warrior");
   const [streak, setStreak] = useState(2);
@@ -127,7 +127,7 @@ export default function Tab() {
             </View>
           </View>
           <View className="flex w-[90%] h-[180px]">
-            {/* <PagerView className="flex-1" initialPage={0}>
+            <PagerView className="flex-1" initialPage={0}>
               <Image
                 source={inner}
                 className="justify-center items-center bg-cover"
@@ -140,7 +140,7 @@ export default function Tab() {
                 source={inner}
                 className="justify-center items-center bg-cover"
                 key="3"></Image>
-            </PagerView> */}
+            </PagerView>
           </View>
           <View className="flex flex-row w-[90%] justify-between">
             <AnalyticsBadge />
