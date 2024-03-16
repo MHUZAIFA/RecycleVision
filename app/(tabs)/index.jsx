@@ -1,11 +1,18 @@
+import {
+  deleteDatabase,
+  getLevel,
+  getNbrOfScans,
+  getStreak,
+} from "@/lib/gamification/dbUtils";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useEffect, useState } from "react";
 import {
   Alert,
   Dimensions,
   Image,
   ImageBackground,
-  SafeAreaView,
   Pressable,
+  SafeAreaView,
   ScrollView,
   Text,
   TouchableOpacity,
