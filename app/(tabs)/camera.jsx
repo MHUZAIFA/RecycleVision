@@ -133,9 +133,9 @@ export default function CameraScreen() {
       <BarcodeMask
         width={300}
         height={525}
-        edgeBorderWidth={3}
-        edgeColor="#62B1F6"
-        animatedLineColor="#00FF00"
+        edgeBorderWidth={5}
+        edgeColor="#f7f7f7"
+        animatedLineColor="#f7f7f7"
       />
       <View
         className="absolute bottom-1 left-0 right-0 flex-row
