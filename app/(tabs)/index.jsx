@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import PagerView from "react-native-pager-view";
+// import PagerView from "react-native-pager-view";
 import { Bar } from "react-native-progress";
 import AnalyticsBadge from "../(components)/AnalyticsBadge";
 import BadgeBanner from "../(components)/BadgeBanner";
@@ -19,7 +19,12 @@ import LineGraph from "../(components)/LineGraph";
 import PieGraph from "../(components)/PieGraph";
 import icon from "../../assets/favicon.png";
 import inner from "../../assets/inner.png";
-import { deleteDatabase, getLevel, getNbrOfScans, getStreak } from "@/lib/gamification/dbUtils";
+import {
+  deleteDatabase,
+  getLevel,
+  getNbrOfScans,
+  getStreak,
+} from "@/lib/gamification/dbUtils";
 import { useEffect, useState } from "react";
 export default function Tab() {
   const [title, setTitle] = useState("Eco Warrior");
@@ -29,15 +34,22 @@ export default function Tab() {
   const [nextTitle, setNextTitle] = useState("Eco Warrior II");
 
   const onPressDelete = () => {
-    Alert.alert('Delete DB', 'Are you sure you want to delete the database?',
-     [ {
-      text: 'Cancel',
-      onPress: () => console.log('Cancel Pressed'),
-      style: 'cancel'
-     }, {
-      text: 'OK',
-      onPress: () => deleteDatabase()
-    }], { cancelable: false });
+    Alert.alert(
+      "Delete DB",
+      "Are you sure you want to delete the database?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: () => deleteDatabase(),
+        },
+      ],
+      { cancelable: false }
+    );
   };
 
   const getStreakText = () => {
@@ -75,7 +87,6 @@ export default function Tab() {
     });
   }, []);
 
-
   return (
     <SafeAreaView>
       <ScrollView>
@@ -102,7 +113,8 @@ export default function Tab() {
             <View className="flex flex-row w-[90%] justify-between mb-2">
               <Text className="text-progress"></Text>
               <Text>
-                {getScansToNextLevelText()}<Text className="text-progress">{nextTitle}</Text>
+                {getScansToNextLevelText()}
+                <Text className="text-progress">{nextTitle}</Text>
               </Text>
             </View>
           </View>
@@ -115,7 +127,7 @@ export default function Tab() {
             </View>
           </View>
           <View className="flex w-[90%] h-[180px]">
-            <PagerView className="flex-1" initialPage={0}>
+            {/* <PagerView className="flex-1" initialPage={0}>
               <Image
                 source={inner}
                 className="justify-center items-center bg-cover"
@@ -128,7 +140,7 @@ export default function Tab() {
                 source={inner}
                 className="justify-center items-center bg-cover"
                 key="3"></Image>
-            </PagerView>
+            </PagerView> */}
           </View>
           <View className="flex flex-row w-[90%] justify-between">
             <AnalyticsBadge />
@@ -141,7 +153,9 @@ export default function Tab() {
             <PieGraph />
           </View>
           <View className="flex-col w-[50vw]">
-            <Pressable className="bg-red-500 h-12 rounded-lg justify-center items-center" onPress={onPressDelete}>
+            <Pressable
+              className="bg-red-500 h-12 rounded-lg justify-center items-center"
+              onPress={onPressDelete}>
               <Text className="text-white font-bold text-2xl">DELETE DB</Text>
             </Pressable>
           </View>
