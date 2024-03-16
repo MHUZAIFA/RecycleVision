@@ -12,7 +12,7 @@ export default function TabLayout() {
         headerShown: false,
         tabBarStyle: {
           backgroundColor: "#fff",
-          /** 
+          /**
            * to HIDE TAB BAR based on route e.g. index
            height: route.name === "index" ? 0 : 60,
            paddingTop: route.name === "index" ? 0 : 10,
