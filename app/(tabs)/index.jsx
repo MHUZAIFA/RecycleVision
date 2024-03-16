@@ -1,11 +1,18 @@
+import {
+  deleteDatabase,
+  getLevel,
+  getNbrOfScans,
+  getStreak,
+} from "@/lib/gamification/dbUtils";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useEffect, useState } from "react";
 import {
   Alert,
   Dimensions,
   Image,
   ImageBackground,
-  SafeAreaView,
   Pressable,
+  SafeAreaView,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -19,8 +26,6 @@ import LineGraph from "../(components)/LineGraph";
 import PieGraph from "../(components)/PieGraph";
 import icon from "../../assets/favicon.png";
 import inner from "../../assets/inner.png";
-import { deleteDatabase, getLevel, getNbrOfScans, getStreak } from "@/lib/gamification/dbUtils";
-import { useEffect, useState } from "react";
 export default function Tab() {
   const [title, setTitle] = useState("Eco Warrior");
   const [streak, setStreak] = useState(2);
@@ -29,15 +34,22 @@ export default function Tab() {
   const [nextTitle, setNextTitle] = useState("Eco Warrior II");
 
   const onPressDelete = () => {
-    Alert.alert('Delete DB', 'Are you sure you want to delete the database?',
-     [ {
-      text: 'Cancel',
-      onPress: () => console.log('Cancel Pressed'),
-      style: 'cancel'
-     }, {
-      text: 'OK',
-      onPress: () => deleteDatabase()
-    }], { cancelable: false });
+    Alert.alert(
+      "Delete DB",
+      "Are you sure you want to delete the database?",
+      [
+        {
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
+        },
+        {
+          text: "OK",
+          onPress: () => deleteDatabase(),
+        },
+      ],
+      { cancelable: false }
+    );
   };
 
   const getStreakText = () => {
@@ -75,7 +87,6 @@ export default function Tab() {
     });
   }, []);
 
-
   return (
     <SafeAreaView>
       <ScrollView>
@@ -102,7 +113,8 @@ export default function Tab() {
             <View className="flex flex-row w-[90%] justify-between mb-2">
               <Text className="text-progress"></Text>
               <Text>
-                {getScansToNextLevelText()}<Text className="text-progress">{nextTitle}</Text>
+                {getScansToNextLevelText()}
+                <Text className="text-progress">{nextTitle}</Text>
               </Text>
             </View>
           </View>
@@ -141,7 +153,9 @@ export default function Tab() {
             <PieGraph />
           </View>
           <View className="flex-col w-[50vw]">
-            <Pressable className="bg-red-500 h-12 rounded-lg justify-center items-center" onPress={onPressDelete}>
+            <Pressable
+              className="bg-red-500 h-12 rounded-lg justify-center items-center"
+              onPress={onPressDelete}>
               <Text className="text-white font-bold text-2xl">DELETE DB</Text>
             </Pressable>
           </View>

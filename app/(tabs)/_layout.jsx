@@ -44,7 +44,7 @@ export default function TabLayout() {
             <View>
               <Animated.View style={{ transform: [{ scale: scaleValue }] }}>
                 <MaterialCommunityIcons
-                  // @ts-ignore
+                  // @ts-ignores
                   name={iconName}
                   size={size}
                   color={color}
