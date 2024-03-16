@@ -1,12 +1,4 @@
 import {
-  deleteDatabase,
-  getLevel,
-  getNbrOfScans,
-  getStreak,
-} from "@/lib/gamification/dbUtils";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { useEffect, useState } from "react";
-import {
   Alert,
   Dimensions,
   Image,
@@ -35,6 +27,7 @@ import {
   getStreak,
 } from "@/lib/gamification/dbUtils";
 import { useEffect, useState } from "react";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 export default function Tab() {
   const [title, setTitle] = useState("Eco Warrior");
