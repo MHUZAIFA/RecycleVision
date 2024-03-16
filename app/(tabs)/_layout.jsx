@@ -12,6 +12,12 @@ export default function TabLayout() {
         headerShown: false,
         tabBarStyle: {
           backgroundColor: "#fff",
+          /**
+           * to HIDE TAB BAR based on route e.g. index
+           height: route.name === "index" ? 0 : 60,
+           paddingTop: route.name === "index" ? 0 : 10,
+           paddingBottom: route.name === "index" ? 0 : 10,
+           */
           height: 60,
           paddingTop: 10,
           paddingBottom: 10,
@@ -29,7 +35,7 @@ export default function TabLayout() {
           }, [focused]);
 
           if (route.name === "camera") {
-            iconName = focused ? "camera-iris" : "camera";
+            iconName = focused ? "camera" : "camera-outline";
           } else if (route.name === "index") {
             iconName = focused ? "home" : "home-outline";
           }
@@ -38,6 +44,7 @@ export default function TabLayout() {
             <View>
               <Animated.View style={{ transform: [{ scale: scaleValue }] }}>
                 <MaterialCommunityIcons
+                  // @ts-ignore
                   name={iconName}
                   size={size}
                   color={color}

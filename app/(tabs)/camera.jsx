@@ -11,7 +11,6 @@ import {
 } from "react-native";
 
 export default function CameraScreen() {
-  const [type] = useState(CameraType.back);
   const [permission, requestPermission] = Camera.useCameraPermissions();
   const [label, setLabel] = useState(null);
   const [confidence, setConfidence] = useState(null);

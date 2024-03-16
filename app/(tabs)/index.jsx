@@ -1,9 +1,11 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import {
+  Alert,
   Dimensions,
   Image,
   ImageBackground,
   SafeAreaView,
+  Pressable,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -17,7 +19,63 @@ import LineGraph from "../(components)/LineGraph";
 import PieGraph from "../(components)/PieGraph";
 import icon from "../../assets/favicon.png";
 import inner from "../../assets/inner.png";
+import { deleteDatabase, getLevel, getNbrOfScans, getStreak } from "@/lib/gamification/dbUtils";
+import { useEffect, useState } from "react";
 export default function Tab() {
+  const [title, setTitle] = useState("Eco Warrior");
+  const [streak, setStreak] = useState(2);
+  const [nbrOfScans, setNbrOfScans] = useState(2);
+  const [nextLevelScans, setNextLevelScans] = useState(5);
+  const [nextTitle, setNextTitle] = useState("Eco Warrior II");
+
+  const onPressDelete = () => {
+    Alert.alert('Delete DB', 'Are you sure you want to delete the database?',
+     [ {
+      text: 'Cancel',
+      onPress: () => console.log('Cancel Pressed'),
+      style: 'cancel'
+     }, {
+      text: 'OK',
+      onPress: () => deleteDatabase()
+    }], { cancelable: false });
+  };
+
+  const getStreakText = () => {
+    switch (streak) {
+      case 0:
+        return "No streak";
+      case 1:
+        return "1 Day";
+      default:
+        return `${streak} Days 🔥`;
+    }
+  };
+
+  const getScansToNextLevelText = () => {
+    const left = nextLevelScans - nbrOfScans;
+    if (left === 1) {
+      return "1 scan to ";
+    }
+    return `${left} scans to `;
+  };
+
+  useEffect(() => {
+    getNbrOfScans().then((nbrOfScans) => {
+      setNbrOfScans(nbrOfScans);
+    });
+
+    getLevel().then((level) => {
+      setTitle(level.currentTitle);
+      setNextTitle(level.nextTitle);
+      setNextLevelScans(level.nextPoints);
+    });
+
+    getStreak().then((streak) => {
+      setStreak(streak);
+    });
+  }, []);
+
+
   return (
     <SafeAreaView>
       <ScrollView>
@@ -25,8 +83,8 @@ export default function Tab() {
           <View className="flex flex-row w-[90%] justify-between">
             <View className="flex-col justify-center space-y-2.5 mb-2">
               <Text className="text-2xl">Hello 👋</Text>
-              <Text className="text-3xl font-bold">Eco Warrior</Text>
-              <Text className="text-sm">Streak: 100 Days🔥</Text>
+              <Text className="text-3xl font-bold">{title}</Text>
+              <Text className="text-sm">Streak: {getStreakText()}</Text>
             </View>
             <ImageBackground
               source={icon}
@@ -35,16 +93,16 @@ export default function Tab() {
             </ImageBackground>
           </View>
           <View className="flex flex-col w-screen gap-1">
-            <Text className="text-progress">3100 exp points</Text>
+            <Text className="text-progress">{nbrOfScans} total scans</Text>
             <Bar
-              progress={0.7}
+              progress={nbrOfScans / nextLevelScans}
               width={Dimensions.get("screen").width * 0.9}
               color="#6342E8"
             />
             <View className="flex flex-row w-[90%] justify-between mb-2">
-              <Text className="text-progress">Level 5</Text>
+              <Text className="text-progress"></Text>
               <Text>
-                165 point to <Text className="text-progress">Level 6</Text>
+                {getScansToNextLevelText()}<Text className="text-progress">{nextTitle}</Text>
               </Text>
             </View>
           </View>
@@ -81,6 +139,11 @@ export default function Tab() {
           </View>
           <View className="flex-col w-screen space-y-1.25">
             <PieGraph />
+          </View>
+          <View className="flex-col w-[50vw]">
+            <Pressable className="bg-red-500 h-12 rounded-lg justify-center items-center" onPress={onPressDelete}>
+              <Text className="text-white font-bold text-2xl">DELETE DB</Text>
+            </Pressable>
           </View>
         </View>
       </ScrollView>
