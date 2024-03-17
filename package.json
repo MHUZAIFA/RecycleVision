@@ -18,7 +18,7 @@
     "@react-navigation/core": "^6.4.15",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
-    "expo": "~50.0.13",
+    "expo": "49.0.0",
     "expo-asset": "~9.0.2",
     "expo-camera": "~14.1.1",
     "expo-constants": "~15.4.5",
