@@ -22,10 +22,10 @@ const PieGraph = () => {
   }, []);
 
   const colorMapping = {
-    'organic': '#00b894',
-    'plastic': '#0984e3',
-    'cardboard': '#fdcb6e',
-    'paper': '#d63031'
+    'cardboard/paper': '#0000FF',
+    'metal/glass': '#008000',
+    'organic': '#A52A2A',
+    'plastic': '#FFFF00'
   };
 
   const chartData = Object.keys(pieData).map(key => ({
