@@ -28,6 +28,8 @@ import {
 } from "@/lib/gamification/dbUtils";
 import { useEffect, useState } from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import * as ImagePicker from "expo-image-picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Tab() {
   const [title, setTitle] = useState("Eco Warrior");
@@ -36,6 +38,7 @@ export default function Tab() {
   const [nextLevelScans, setNextLevelScans] = useState(5);
   const [nextTitle, setNextTitle] = useState("Eco Warrior II");
   const [currentPic, setCurrentPic] = useState(0);
+  const [profielPic, setProfilePic] = useState(null);
 
   const onPressDelete = () => {
     Alert.alert(
@@ -75,6 +78,18 @@ export default function Tab() {
     return `${left} scans to `;
   };
 
+  const handleImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      aspect: [16, 9],
+      quality: 1,
+    });
+    if (!result.canceled) {
+      setProfilePic(result.assets[0].uri);
+      await AsyncStorage.setItem("profilePic", result.assets[0].uri);
+    }
+  };
+
   useEffect(() => {
     getNbrOfScans().then((nbrOfScans) => {
       setNbrOfScans(nbrOfScans);
@@ -89,10 +104,19 @@ export default function Tab() {
     getStreak().then((streak) => {
       setStreak(streak);
     });
+
+    const getPic = async () => {
+      const uri = await AsyncStorage.getItem("profilePic");
+      if (uri !== null) {
+        setProfilePic(uri);
+      }
+    };
+
+    getPic();
   }, []);
 
   return (
-    <SafeAreaView>
+    <SafeAreaView className="bg-background">
       <ScrollView>
         <View className="flex-col w-screen mx-5 space-y-3.5 my-5">
           <View className="flex flex-row w-[90%] justify-between">
@@ -101,11 +125,14 @@ export default function Tab() {
               <Text className="text-3xl font-bold">{title}</Text>
               <Text className="text-sm">Streak: {getStreakText()}</Text>
             </View>
-            <ImageBackground
-              source={icon}
-              className="w-[50px] h-[50px] flex rounded-full">
-              <TouchableOpacity className="w-[100%] h-[100%]"></TouchableOpacity>
-            </ImageBackground>
+            <TouchableOpacity
+              className="w-[50px] h-[50px] flex justify-center items-center"
+              onPress={handleImage}>
+              <Image
+                source={profielPic ? { uri: profielPic } : icon}
+                className="w-[100%] h-[100%] rounded-full"
+              />
+            </TouchableOpacity>
           </View>
           <View className="flex flex-col w-screen gap-1">
             <Text className="text-progress">{nbrOfScans} total scans</Text>
