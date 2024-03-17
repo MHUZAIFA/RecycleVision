@@ -12,6 +12,8 @@ import {
   View,
 } from "react-native";
 import BarcodeMask from "react-native-barcode-mask";
+import { SimpleLineIcons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 
 export default function CameraScreen() {
   const cameraRef = useRef(null);
@@ -22,6 +24,7 @@ export default function CameraScreen() {
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [isPreview, setIsPreview] = useState(false);
   const [isLoading, setIsLoading] = useState(false); // New state for loading
+  const [image, setimage] = useState(null); // New state for loading
   const isFocused = useIsFocused();
   const screenRatio = "16:9";
 
@@ -60,16 +63,8 @@ export default function CameraScreen() {
         if (pic) {
           await cameraRef.current.pausePreview();
           setIsPreview(true);
+          setimage(pic);
         }
-        const resizedPic = await manipulateAsync(
-          pic.uri,
-          [{ resize: { width: 224, height: 224 } }],
-          { compress: 0.4, format: SaveFormat.JPEG, base64: true }
-        );
-        const response = await fetch(resizedPic.uri);
-        const blob = await response.blob();
-        const imageBuffer = await new Response(blob).arrayBuffer();
-        sendImageToModel(imageBuffer);
       } catch (e) {
         setError(
           "An error occurred while capturing the image. Please try again."
@@ -78,6 +73,25 @@ export default function CameraScreen() {
       }
     }
     setIsLoading(false);
+  };
+
+  const processImage = async () => {
+    try {
+      const resizedPic = await manipulateAsync(
+        image.uri,
+        [{ resize: { width: 224, height: 224 } }],
+        { compress: 0.4, format: SaveFormat.JPEG, base64: true }
+      );
+      const response = await fetch(resizedPic.uri);
+      const blob = await response.blob();
+      const imageBuffer = await new Response(blob).arrayBuffer();
+      sendImageToModel(imageBuffer);
+    } catch (e) {
+      setError(
+        "An error occurred while capturing the image. Please try again."
+      );
+      console.log("Failed", e);
+    }
   };
 
   /**
@@ -133,9 +147,9 @@ export default function CameraScreen() {
       <BarcodeMask
         width={300}
         height={525}
-        edgeBorderWidth={3}
-        edgeColor="#62B1F6"
-        animatedLineColor="#00FF00"
+        edgeBorderWidth={5}
+        edgeColor="#f7f7f7"
+        animatedLineColor="#f7f7f7"
       />
       <View
         className="absolute bottom-1 left-0 right-0 flex-row
@@ -151,7 +165,7 @@ export default function CameraScreen() {
               {
                 borderWidth: 5,
                 borderRadius: 75,
-                borderColor: "gray",
+                borderColor: "#f7f7f7",
                 height: 75,
                 width: 75,
                 display: "flex",
@@ -165,18 +179,36 @@ export default function CameraScreen() {
       </View>
     </>
   );
-  const renderCloseButton = () => (
-    <TouchableOpacity
-      onPress={cancelPreview}
-      className="absolute top-14 left-6 h-10 w-10 bg-gray-300 rounded-full items-center justify-center">
-      <X color={"black"} size={24} />
-    </TouchableOpacity>
+
+  const renderConfirmationPhaseElements = () => (
+    <>
+      <TouchableOpacity
+        onPress={cancelPreview}
+        className="absolute top-14 left-6 h-10 w-10 bg-gray-300 rounded-full items-center justify-center">
+        <X color={"black"} size={24} />
+      </TouchableOpacity>
+      <View
+        className="bottom-4 justify-between items-center flex-1 flex-row bg-white mx-16 p-2 rounded-xl shadow-xl">
+        <TouchableOpacity
+          onPress={cancelPreview}
+          style={{ backgroundColor: '#E9E9E9', padding: 10 }}
+          className="rounded-xl">
+          <SimpleLineIcons name="refresh" size={24} color="black" />
+        </TouchableOpacity>
+        <Text>Check?</Text>
+        <TouchableOpacity
+          onPress={processImage}
+          style={{ backgroundColor: '#6342E8', padding: 10 }}
+          className="rounded-xl">
+          <MaterialIcons name="done" size={24} color="white" />
+        </TouchableOpacity>
+      </View>
+    </>
   );
   const renderLoading = () => (
     <View
-      className="absolute top-1/2 left-0 right-0 h-24 -mt-6
-                flexitems-center justify-center bg-black bg-opacity-50 px-4">
-      <ActivityIndicator size="large" color="#808080" />
+      className="absolute w-full h-full flex-1 flexitems-center justify-center bg-black px-4">
+      <ActivityIndicator size="large" color="#f7f7f7" />
     </View>
   );
   const renderError = (error) => (
@@ -195,7 +227,6 @@ export default function CameraScreen() {
       </Text>
     </View>
   );
-
   const cancelPreview = async () => {
     await cameraRef.current.resumePreview();
     setIsPreview(false);
@@ -222,7 +253,7 @@ export default function CameraScreen() {
               console.log("camera error", error);
             }}>
             <View className="flex-1 flex-row bg-transparent justify-between items-end">
-              {!isPreview ? renderCaptureControl() : renderCloseButton()}
+              {!isPreview ? renderCaptureControl() : renderConfirmationPhaseElements()}
             </View>
           </Camera>
           {isLoading && renderLoading()}
