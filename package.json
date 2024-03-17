@@ -18,7 +18,7 @@
     "@react-navigation/core": "^6.4.15",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
-    "expo": "49.0.0",
+    "expo": "~50.0.13",
     "expo-asset": "~9.0.2",
     "expo-camera": "~14.1.1",
     "expo-constants": "~15.4.5",
@@ -45,7 +45,9 @@
     "react-native-svg": "^15.1.0",
     "react-native-web": "~0.19.6",
     "tailwind-merge": "^2.2.1",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "expo-image-picker": "~14.7.1",
+    "@react-native-async-storage/async-storage": "1.21.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
