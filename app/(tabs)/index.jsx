@@ -1,4 +1,12 @@
 import {
+  deleteDatabase,
+  getLevel,
+  getNbrOfScans,
+  getStreak,
+} from "@/lib/gamification/dbUtils";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useEffect, useState } from "react";
+import {
   Alert,
   Dimensions,
   Image,
@@ -10,24 +18,18 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { PageIndicator } from "react-native-page-indicator";
 import PagerView from "react-native-pager-view";
 import { Bar } from "react-native-progress";
-import SupportBanner from "../(components)/SupportBanner";
 import LineGraph from "../(components)/LineGraph";
 import PieGraph from "../(components)/PieGraph";
+import SupportBanner from "../(components)/SupportBanner";
+import best_buy from "../../assets/coupons/BEST_BUY.png";
+import kfc from "../../assets/coupons/KFC.png";
+import pizza_hut from "../../assets/coupons/PIZZA_HUT.png";
+import starbucks from "../../assets/coupons/STARBUCKS.png";
+import walmart from "../../assets/coupons/WALMART.png";
 import icon from "../../assets/favicon.png";
-import pizza from "../../assets/pizza.png";
-import offer from "../../assets/offer.png";
-import month from "../../assets/month.png";
-import { PageIndicator } from "react-native-page-indicator";
-import {
-  deleteDatabase,
-  getLevel,
-  getNbrOfScans,
-  getStreak,
-} from "@/lib/gamification/dbUtils";
-import { useEffect, useState } from "react";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 export default function Tab() {
   const [title, setTitle] = useState("Eco Warrior");
@@ -36,6 +38,36 @@ export default function Tab() {
   const [nextLevelScans, setNextLevelScans] = useState(5);
   const [nextTitle, setNextTitle] = useState("Eco Warrior II");
   const [currentPic, setCurrentPic] = useState(0);
+
+  // using Fibonacci sequence to determine the #scans needed to reach the next level
+  const couponsByStreak = {
+    1: [kfc],
+    2: [kfc, best_buy],
+    3: [kfc, best_buy, pizza_hut],
+    5: [kfc, best_buy, pizza_hut, walmart],
+    8: [kfc, best_buy, pizza_hut, walmart, starbucks],
+  };
+  const [couponMap, setCouponMap] = useState([]);
+
+  useEffect(() => {
+    // update the coupon map based on the streak where
+    // the maxKey in couponsByStreak is the highest streak
+    // that has a coupon and then the value of the maxKey
+    // is going to set the couponMap
+    let maxKey = 0;
+    for (const key in couponsByStreak) {
+      if (parseInt(key) <= streak) {
+        maxKey = Math.max(maxKey, parseInt(key));
+      }
+    }
+    // Check if maxKey is 0 and handle accordingly
+    if (maxKey === 0) {
+      // Set couponMap to an empty array or a default value
+      setCouponMap([]);
+    } else {
+      setCouponMap(couponsByStreak[maxKey]);
+    }
+  }, [streak]);
 
   const onPressDelete = () => {
     Alert.alert(
@@ -134,18 +166,13 @@ export default function Tab() {
               className="flex-1"
               initialPage={0}
               onPageSelected={(e) => setCurrentPic(e.nativeEvent.position)}>
-              <Image
-                source={pizza}
-                className="justify-center items-center bg-cover rounded-xl"
-                key="1"></Image>
-              <Image
-                source={month}
-                className="justify-center items-center bg-cover rounded-xl"
-                key="2"></Image>
-              <Image
-                source={offer}
-                className="justify-center items-center bg-cover rounded-xl"
-                key="3"></Image>
+              {couponMap?.map((coupon, index) => (
+                <Image
+                  source={coupon}
+                  className="justify-center items-center bg-cover rounded-xl w-3/4 h-3/4"
+                  key={index}
+                />
+              ))}
             </PagerView>
           </View>
           <View className="flex w-[90%]">
