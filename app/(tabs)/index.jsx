@@ -159,7 +159,7 @@ export default function Tab() {
               {couponMap?.map((coupon, index) => (
                 <Image
                   source={coupon}
-                  className="justify-center items-center bg-cover rounded-xl w-3/4 h-3/4"
+                  className="bg-cover rounded-xl w-[100%] h-[100%]"
                   key={index}
                 />
               ))}
