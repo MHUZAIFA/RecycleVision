@@ -47,26 +47,16 @@ export default function Tab() {
     5: [kfc, best_buy, pizza_hut, walmart],
     8: [kfc, best_buy, pizza_hut, walmart, starbucks],
   };
-  const [couponMap, setCouponMap] = useState([]);
+  const [couponMap, setCouponMap] = useState(couponsByStreak[streak]);
 
   useEffect(() => {
-    // update the coupon map based on the streak where
-    // the maxKey in couponsByStreak is the highest streak
-    // that has a coupon and then the value of the maxKey
-    // is going to set the couponMap
-    let maxKey = 0;
+    let maxKey = 1;
     for (const key in couponsByStreak) {
       if (parseInt(key) <= streak) {
         maxKey = Math.max(maxKey, parseInt(key));
       }
     }
-    // Check if maxKey is 0 and handle accordingly
-    if (maxKey === 0) {
-      // Set couponMap to an empty array or a default value
-      setCouponMap([]);
-    } else {
-      setCouponMap(couponsByStreak[maxKey]);
-    }
+    setCouponMap(couponsByStreak[maxKey]);
   }, [streak]);
 
   const onPressDelete = () => {
