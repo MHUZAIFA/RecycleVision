@@ -1,3 +1,4 @@
+import { MaterialIcons, SimpleLineIcons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/core";
 import { AutoFocus, Camera, CameraType } from "expo-camera";
 import { SaveFormat, manipulateAsync } from "expo-image-manipulator";
@@ -12,14 +13,10 @@ import {
   View,
 } from "react-native";
 import BarcodeMask from "react-native-barcode-mask";
-import { SimpleLineIcons } from '@expo/vector-icons';
-import { MaterialIcons } from '@expo/vector-icons';
 
 export default function CameraScreen() {
   const cameraRef = useRef(null);
   const [permission, requestPermission] = Camera.useCameraPermissions();
-  const [label, setLabel] = useState(null);
-  const [confidence, setConfidence] = useState(null);
   const [error, setError] = useState(null);
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [isPreview, setIsPreview] = useState(false);
@@ -27,6 +24,10 @@ export default function CameraScreen() {
   const [image, setimage] = useState(null); // New state for loading
   const isFocused = useIsFocused();
   const screenRatio = "16:9";
+
+  const [prediction, setPrediction] = useState(null);
+  const [otherResults, setOtherResults] = useState([]);
+  const [showOtherResults, setShowOtherResults] = useState(false);
 
   /**
    * FUNCTIONS
@@ -66,9 +67,7 @@ export default function CameraScreen() {
           setimage(pic);
         }
       } catch (e) {
-        setError(
-          "An error occurred while capturing the image. Please try again."
-        );
+        setError("Error capturing image. Please try again.");
         console.log("Failed", e);
       }
     }
@@ -104,19 +103,23 @@ export default function CameraScreen() {
         {
           headers: {
             Authorization: "Bearer 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",
+            "Content-Type": "image/jpeg",
           },
           method: "POST",
           body: imageBuffer,
         }
+      ).then((res) => res.json());
+      const { label, score } = result[0];
+      setPrediction({ [label]: Math.round(score.toFixed(2) * 100) });
+
+      // Save the other results
+      setOtherResults(
+        result.slice(1).map(({ label, score }) => ({
+          [label]: Math.round(score.toFixed(2) * 100),
+        }))
       );
-      const resultJson = await result.json();
-      const { label, score } = resultJson[0];
-      label && setLabel(label);
-      score && setConfidence(Math.round(score.toFixed(2) * 100));
     } catch (e) {
-      setError(
-        "An error occurred while processing the image. Please try again."
-      );
+      setError("Error from API. Please try again.");
       console.log("Failed", e);
     }
   };
@@ -187,18 +190,17 @@ export default function CameraScreen() {
         className="absolute top-14 left-6 h-10 w-10 bg-gray-300 rounded-full items-center justify-center">
         <X color={"black"} size={24} />
       </TouchableOpacity>
-      <View
-        className="bottom-4 justify-between items-center flex-1 flex-row bg-white mx-16 p-2 rounded-xl shadow-xl">
+      <View className="bottom-4 justify-between items-center flex-1 flex-row bg-white mx-16 p-2 rounded-xl shadow-xl">
         <TouchableOpacity
           onPress={cancelPreview}
-          style={{ backgroundColor: '#E9E9E9', padding: 10 }}
+          style={{ backgroundColor: "#E9E9E9", padding: 10 }}
           className="rounded-xl">
           <SimpleLineIcons name="refresh" size={24} color="black" />
         </TouchableOpacity>
         <Text>Check?</Text>
         <TouchableOpacity
           onPress={processImage}
-          style={{ backgroundColor: '#6342E8', padding: 10 }}
+          style={{ backgroundColor: "#6342E8", padding: 10 }}
           className="rounded-xl">
           <MaterialIcons name="done" size={24} color="white" />
         </TouchableOpacity>
@@ -206,11 +208,11 @@ export default function CameraScreen() {
     </>
   );
   const renderLoading = () => (
-    <View
-      className="absolute w-full h-full flex-1 flexitems-center justify-center bg-black px-4">
+    <View className="absolute w-full h-full flex-1 flexitems-center justify-center bg-black px-4">
       <ActivityIndicator size="large" color="#f7f7f7" />
     </View>
   );
+
   const renderError = (error) => (
     <View
       className="absolute top-1/2 left-0 right-0 h-24 -mt-6
@@ -218,20 +220,42 @@ export default function CameraScreen() {
       <Text className="text-white font-bold text-lg">{error}</Text>
     </View>
   );
-  const renderLabelConfidence = (label, confidence) => (
-    <View
-      className="absolute top-1/2 left-0 right-0 h-24 -mt-6 flex
-                items-center justify-center bg-black bg-opacity-50 px-4">
-      <Text className="text-white font-bold text-2xl">
-        {label} - {confidence}%
-      </Text>
-    </View>
-  );
+
+  const renderLabelConfidence = (prediction) => {
+    const label = Object.keys(prediction)[0];
+    const confidence = prediction[label];
+
+    return (
+      <View
+        className="absolute top-1/2 left-0 right-0 h-24 -mt-6 flex
+                  items-center justify-center bg-black bg-opacity-50 px-4">
+        <Text className="text-white font-bold text-2xl">
+          {label} - {confidence}%
+        </Text>
+        {/* <Button
+          title={showOtherResults ? "Hide Other Results" : "Show Other Results"}
+          onPress={() => setShowOtherResults(!showOtherResults)}
+        />
+        {showOtherResults &&
+          otherResults.map((result, index) => {
+            const label = Object.keys(result)[0];
+            const confidence = result[label];
+            return (
+              <Text key={index} className="text-white font-bold text-2xl">
+                {label} - {confidence}%
+              </Text>
+            );
+          })} */}
+      </View>
+    );
+  };
+
   const cancelPreview = async () => {
     await cameraRef.current.resumePreview();
     setIsPreview(false);
-    setLabel(null);
-    setConfidence(null);
+    setPrediction(null);
+    setOtherResults([]);
+    setShowOtherResults(false);
     setError(null);
   };
 
@@ -253,12 +277,14 @@ export default function CameraScreen() {
               console.log("camera error", error);
             }}>
             <View className="flex-1 flex-row bg-transparent justify-between items-end">
-              {!isPreview ? renderCaptureControl() : renderConfirmationPhaseElements()}
+              {!isPreview
+                ? renderCaptureControl()
+                : renderConfirmationPhaseElements()}
             </View>
           </Camera>
           {isLoading && renderLoading()}
           {error && renderError(error)}
-          {label && confidence && renderLabelConfidence(label, confidence)}
+          {prediction && renderLabelConfidence(prediction)}
         </>
       ) : !permission.granted ? (
         <RenderRequestPermission />
