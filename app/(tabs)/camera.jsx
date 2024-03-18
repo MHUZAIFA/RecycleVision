@@ -23,7 +23,7 @@ export default function CameraScreen() {
   const [image, setimage] = useState(null);
   const [prediction, setPrediction] = useState(null);
   const isFocused = useIsFocused();
-  
+
   const screenRatio = "16:9";
   const buttonOpacity = new Animated.Value(1);
   const buttonColor = new Animated.Value(0);
@@ -245,7 +245,7 @@ export default function CameraScreen() {
   const Loading = () => {
     return (
       <View className="absolute w-full h-full flex-1 flexitems-center justify-center bg-black opacity-70 px-4">
-        <ActivityIndicator size="large" color="#f7f7f7" />
+        <ActivityIndicator size="large" color="#6342E8" />
       </View>
     );
   };
