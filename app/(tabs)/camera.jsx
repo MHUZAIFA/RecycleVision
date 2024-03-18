@@ -23,6 +23,9 @@ export default function CameraScreen() {
   const [image, setimage] = useState(null);
   const [prediction, setPrediction] = useState(null);
   const isFocused = useIsFocused();
+  const buttonOpacity = new Animated.Value(1);
+  const buttonColor = new Animated.Value(0);
+
   const screenRatio = "16:9";
 
   /**
@@ -35,18 +38,43 @@ export default function CameraScreen() {
     setError(null);
   };
   const handlePressIn = () => {
-    Animated.spring(buttonSize, {
-      toValue: 0.9,
-      useNativeDriver: true,
-    }).start();
+    Animated.parallel([
+      Animated.spring(buttonSize, {
+        toValue: 0.8,
+        useNativeDriver: true,
+      }),
+      Animated.timing(buttonOpacity, {
+        toValue: 0.5,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(buttonColor, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: false,
+      }),
+    ]).start();
   };
+
   const handlePressOut = () => {
-    Animated.spring(buttonSize, {
-      toValue: 1,
-      friction: 3,
-      tension: 200,
-      useNativeDriver: true,
-    }).start();
+    Animated.parallel([
+      Animated.spring(buttonSize, {
+        toValue: 1,
+        friction: 3,
+        tension: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(buttonOpacity, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(buttonColor, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: false,
+      }),
+    ]).start();
   };
 
   /**
@@ -131,8 +159,15 @@ export default function CameraScreen() {
   );
 
   const buttonSize = new Animated.Value(1);
+  const buttonColorInterpolation = buttonColor.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["transparent", "#6342E8"],
+  });
+
   const animatedStyle = {
     transform: [{ scale: buttonSize }],
+    opacity: buttonOpacity,
+    backgroundColor: buttonColorInterpolation,
   };
 
   const CaptureControl = () => {
