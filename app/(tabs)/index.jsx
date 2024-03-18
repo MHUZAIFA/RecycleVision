@@ -83,7 +83,7 @@ export default function Tab() {
   const getStreakText = () => {
     switch (streak) {
       case 0:
-        return "No streak";
+        return "0";
       case 1:
         return "1 Day";
       default:
@@ -102,21 +102,21 @@ export default function Tab() {
   const getCouponText = () => {
     switch (streak) {
       case 0:
-        return "1 day to unlock coupon";
+        return "Next coupon unlocked at streak 1";
       case 1:
-        return "1 day to unlock next coupon";
+        return "Next coupon unlocked at streak 2";
       case 2:
-        return "1 day to unlock coupon";
+        return "Next coupon unlocked at streak 3";
       case 3:
-          return "2 day to unlock next coupon";
+          return "Next coupon unlocked at streak 5";
       case 4:
-          return "1 day to unlock next coupon";
+          return "Next coupon unlocked at streak 5";
       case 5:
-          return "3 day to unlock next coupon";
+          return "Next coupon unlocked at streak 8";
       case 6:
-          return "2 day to unlock next coupon";  
+          return "Next coupon unlocked at streak 8";  
       case 7:
-            return "1 day to unlock next coupon";
+            return "Next coupon unlocked at streak 8";
       default:
         return "";
     }
@@ -198,7 +198,7 @@ export default function Tab() {
               className="flex-1"
               initialPage={0}
               onPageSelected={(e) => setCurrentPic(e.nativeEvent.position)}>
-              {couponMap?.map((coupon, index) => (
+              {/* {couponMap?.map((coupon, index) => (
                 <Image
                   source={coupon}
                   resizeMode="contain" // Adjust the resizeMode here
@@ -208,6 +208,21 @@ export default function Tab() {
                   className="justify-center items-center rounded-xl w-full h-full"
                   key={index}
                 />
+              ))} */}
+              {couponMap?.map((coupon, index) => (
+              <View style={{ width: '100%', height: '100%', overflow: 'hidden', justifyContent: 'center', alignItems: 'center' }}>
+              <Image
+              source={coupon}
+              resizeMode="contain"
+              style={{
+              width: '100%', 
+              height: '100%',
+              ...index === 0 ? { tintColor: 'gray' } : {}, // Apply a gray tint to the image at index 1
+              }}
+              className="justify-center items-center rounded-xl"
+              key={index}
+              />
+              </View>
               ))}
             </PagerView>
           </View>
