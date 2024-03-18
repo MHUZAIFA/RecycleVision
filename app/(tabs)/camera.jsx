@@ -24,10 +24,11 @@ export default function CameraScreen() {
   const [image, setimage] = useState(null); // New state for loading
   const isFocused = useIsFocused();
   const screenRatio = "16:9";
-
+  const buttonOpacity = new Animated.Value(1);
   const [prediction, setPrediction] = useState(null);
   const [otherResults, setOtherResults] = useState([]);
   const [showOtherResults, setShowOtherResults] = useState(false);
+  const buttonColor = new Animated.Value(0);
 
   /**
    * FUNCTIONS
@@ -36,18 +37,43 @@ export default function CameraScreen() {
     setIsCameraReady(true);
   };
   const handlePressIn = () => {
-    Animated.spring(buttonSize, {
-      toValue: 0.9,
-      useNativeDriver: true,
-    }).start();
+    Animated.parallel([
+      Animated.spring(buttonSize, {
+        toValue: 0.8,
+        useNativeDriver: true,
+      }),
+      Animated.timing(buttonOpacity, {
+        toValue: 0.5,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(buttonColor, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: false,
+      }),
+    ]).start();
   };
+
   const handlePressOut = () => {
-    Animated.spring(buttonSize, {
-      toValue: 1,
-      friction: 3,
-      tension: 200,
-      useNativeDriver: true,
-    }).start();
+    Animated.parallel([
+      Animated.spring(buttonSize, {
+        toValue: 1,
+        friction: 3,
+        tension: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(buttonOpacity, {
+        toValue: 1,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(buttonColor, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: false,
+      }),
+    ]).start();
   };
 
   /**
@@ -141,8 +167,15 @@ export default function CameraScreen() {
   );
 
   const buttonSize = new Animated.Value(1);
+  const buttonColorInterpolation = buttonColor.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["transparent", "#6342E8"],
+  });
+
   const animatedStyle = {
     transform: [{ scale: buttonSize }],
+    opacity: buttonOpacity,
+    backgroundColor: buttonColorInterpolation,
   };
 
   const renderCaptureControl = () => (
