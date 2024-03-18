@@ -215,7 +215,7 @@ export default function CameraScreen() {
     );
   };
 
-  const Error = (error) => {
+  const Error = ({error}) => {
     return (
       <View
         className="absolute top-1/2 left-0 right-0 h-24 -mt-6
