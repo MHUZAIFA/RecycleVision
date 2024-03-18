@@ -1,7 +1,6 @@
 import { MaterialIcons, SimpleLineIcons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/core";
-import { AutoFocus, Camera, CameraType } from "expo-camera";
-import { SaveFormat, manipulateAsync } from "expo-image-manipulator";
+import { AutoFocus, Camera, CameraType, ImageType } from "expo-camera";
 import { X } from "lucide-react-native";
 import { useRef, useState } from "react";
 import {
@@ -20,21 +19,15 @@ export default function CameraScreen() {
   const [error, setError] = useState(null);
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [isPreview, setIsPreview] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // New state for loading
-  const [image, setimage] = useState(null); // New state for loading
+  const [isLoading, setIsLoading] = useState(false);
+  const [image, setimage] = useState(null);
+  const [prediction, setPrediction] = useState(null);
   const isFocused = useIsFocused();
   const screenRatio = "16:9";
-
-  const [prediction, setPrediction] = useState(null);
-  const [otherResults, setOtherResults] = useState([]);
-  const [showOtherResults, setShowOtherResults] = useState(false);
 
   /**
    * FUNCTIONS
    */
-  const onCameraReady = () => {
-    setIsCameraReady(true);
-  };
   const handlePressIn = () => {
     Animated.spring(buttonSize, {
       toValue: 0.9,
@@ -54,12 +47,12 @@ export default function CameraScreen() {
    * DETECT IMAGE
    */
   const detectImage = async () => {
-    setIsLoading(true);
     if (cameraRef.current) {
       try {
         const pic = await cameraRef.current?.takePictureAsync({
           base64: true,
-          fixOrientation: true,
+          quality: 0.5,
+          imageType: ImageType.jpg,
         });
         if (pic) {
           await cameraRef.current.pausePreview();
@@ -68,29 +61,23 @@ export default function CameraScreen() {
         }
       } catch (e) {
         setError("Error capturing image. Please try again.");
-        console.log("Failed", e);
+        console.log("Failed Camera", e);
       }
     }
-    setIsLoading(false);
   };
 
   const processImage = async () => {
+    setIsLoading(true);
     try {
-      const resizedPic = await manipulateAsync(
-        image.uri,
-        [{ resize: { width: 224, height: 224 } }],
-        { compress: 0.4, format: SaveFormat.JPEG, base64: true }
-      );
-      const response = await fetch(resizedPic.uri);
+      const response = await fetch(image.uri);
       const blob = await response.blob();
       const imageBuffer = await new Response(blob).arrayBuffer();
       sendImageToModel(imageBuffer);
     } catch (e) {
-      setError(
-        "An error occurred while capturing the image. Please try again."
-      );
-      console.log("Failed", e);
+      setError("Error capturing image. Please try again.");
+      console.log("Failed Processing", e);
     }
+    setIsLoading(false);
   };
 
   /**
@@ -103,24 +90,21 @@ export default function CameraScreen() {
         {
           headers: {
             Authorization: "Bearer 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",
-            "Content-Type": "image/jpeg",
+            "Content-Type": "image/jpg",
           },
           method: "POST",
           body: imageBuffer,
         }
       ).then((res) => res.json());
-      const { label, score } = result[0];
-      setPrediction({ [label]: Math.round(score.toFixed(2) * 100) });
-
-      // Save the other results
-      setOtherResults(
-        result.slice(1).map(({ label, score }) => ({
-          [label]: Math.round(score.toFixed(2) * 100),
-        }))
-      );
+      if (result && result.length > 0) {
+        const { label, score } = result[0];
+        setPrediction({ [label]: Math.round(score.toFixed(2) * 100) });
+      } else {
+        setError("No results found. Please try again.");
+      }
     } catch (e) {
       setError("Error from API. Please try again.");
-      console.log("Failed", e);
+      console.log("Failed API", e);
     }
   };
 
@@ -145,51 +129,60 @@ export default function CameraScreen() {
     transform: [{ scale: buttonSize }],
   };
 
-  const renderCaptureControl = () => (
-    <>
-      <BarcodeMask
-        width={300}
-        height={525}
-        edgeBorderWidth={5}
-        edgeColor="#f7f7f7"
-        animatedLineColor="#f7f7f7"
-      />
-      <View
-        className="absolute bottom-1 left-0 right-0 flex-row
+  const CaptureControl = () => {
+    return (
+      <>
+        <BarcodeMask
+          width={300}
+          height={525}
+          edgeBorderWidth={5}
+          edgeColor="#f7f7f7"
+          animatedLineColor="#f7f7f7"
+        />
+        <View
+          className="absolute bottom-1 left-0 right-0 flex-row
                   justify-between items-center">
-        <Pressable
-          className="flex-1 items-center justify-end mb-5"
-          disabled={!isCameraReady}
-          onPressIn={handlePressIn}
-          onPressOut={handlePressOut}
-          onPress={detectImage}>
-          <Animated.View
-            style={[
-              {
-                borderWidth: 5,
-                borderRadius: 75,
-                borderColor: "#f7f7f7",
-                height: 75,
-                width: 75,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              },
-              animatedStyle,
-            ]}
-          />
-        </Pressable>
-      </View>
-    </>
-  );
+          <Pressable
+            className="flex-1 items-center justify-end mb-5"
+            disabled={!isCameraReady}
+            onPressIn={handlePressIn}
+            onPressOut={handlePressOut}
+            onPress={detectImage}>
+            <Animated.View
+              style={[
+                {
+                  borderWidth: 5,
+                  borderRadius: 75,
+                  borderColor: "#f7f7f7",
+                  height: 75,
+                  width: 75,
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                },
+                animatedStyle,
+              ]}
+            />
+          </Pressable>
+        </View>
+      </>
+    );
+  };
 
-  const renderConfirmationPhaseElements = () => (
-    <>
+  const CancelPreview = () => {
+    return (
       <TouchableOpacity
         onPress={cancelPreview}
         className="absolute top-14 left-6 h-10 w-10 bg-gray-300 rounded-full items-center justify-center">
         <X color={"black"} size={24} />
       </TouchableOpacity>
+    );
+  };
+
+  const ConfirmationPhase = () => {
+    return prediction ? (
+      <CancelPreview />
+    ) : (
       <View className="bottom-4 justify-between items-center flex-1 flex-row bg-white mx-16 p-2 rounded-xl shadow-xl">
         <TouchableOpacity
           onPress={cancelPreview}
@@ -205,21 +198,26 @@ export default function CameraScreen() {
           <MaterialIcons name="done" size={24} color="white" />
         </TouchableOpacity>
       </View>
-    </>
-  );
-  const renderLoading = () => (
-    <View className="absolute w-full h-full flex-1 flexitems-center justify-center bg-black px-4">
-      <ActivityIndicator size="large" color="#f7f7f7" />
-    </View>
-  );
+    );
+  };
 
-  const renderError = (error) => (
-    <View
-      className="absolute top-1/2 left-0 right-0 h-24 -mt-6
+  const Loading = () => {
+    return (
+      <View className="absolute w-full h-full flex-1 flexitems-center justify-center bg-black opacity-70 px-4">
+        <ActivityIndicator size="large" color="#f7f7f7" />
+      </View>
+    );
+  };
+
+  const Error = (error) => {
+    return (
+      <View
+        className="absolute top-1/2 left-0 right-0 h-24 -mt-6
                 flex items-center justify-center bg-red-500 px-4">
-      <Text className="text-white font-bold text-lg">{error}</Text>
-    </View>
-  );
+        <Text className="text-white font-bold text-lg">{error}</Text>
+      </View>
+    );
+  };
 
   const renderLabelConfidence = (prediction) => {
     const label = Object.keys(prediction)[0];
@@ -232,20 +230,6 @@ export default function CameraScreen() {
         <Text className="text-white font-bold text-2xl">
           {label} - {confidence}%
         </Text>
-        {/* <Button
-          title={showOtherResults ? "Hide Other Results" : "Show Other Results"}
-          onPress={() => setShowOtherResults(!showOtherResults)}
-        />
-        {showOtherResults &&
-          otherResults.map((result, index) => {
-            const label = Object.keys(result)[0];
-            const confidence = result[label];
-            return (
-              <Text key={index} className="text-white font-bold text-2xl">
-                {label} - {confidence}%
-              </Text>
-            );
-          })} */}
       </View>
     );
   };
@@ -254,8 +238,6 @@ export default function CameraScreen() {
     await cameraRef.current.resumePreview();
     setIsPreview(false);
     setPrediction(null);
-    setOtherResults([]);
-    setShowOtherResults(false);
     setError(null);
   };
 
@@ -266,24 +248,21 @@ export default function CameraScreen() {
           <Camera
             className="flex-1"
             ratio={screenRatio}
-            // @ts-ignore FLASHMODE
-            // flashMode={Camera.Constants.FlashMode.on}
-            onCameraReady={onCameraReady}
             type={CameraType.back}
             autoFocus={AutoFocus.on}
-            ref={cameraRef}
-            onMountError={(error) => {
-              renderError(error);
-              console.log("camera error", error);
-            }}>
+            onCameraReady={() => setIsCameraReady(true)}
+            onMountError={(error) => <Error error={error} />}
+            ref={cameraRef}>
             <View className="flex-1 flex-row bg-transparent justify-between items-end">
-              {!isPreview
-                ? renderCaptureControl()
-                : renderConfirmationPhaseElements()}
+              {!isPreview ? (
+                <CaptureControl />
+              ) : (
+                isPreview && <ConfirmationPhase />
+              )}
             </View>
           </Camera>
-          {isLoading && renderLoading()}
-          {error && renderError(error)}
+          {isLoading && <Loading />}
+          {error && <Error error={error} />}
           {prediction && renderLabelConfidence(prediction)}
         </>
       ) : !permission.granted ? (
