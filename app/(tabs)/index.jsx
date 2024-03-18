@@ -41,6 +41,7 @@ export default function Tab() {
 
   // using Fibonacci sequence to determine the #scans needed to reach the next level
   const couponsByStreak = {
+    0: [kfc],
     1: [kfc],
     2: [kfc, best_buy],
     3: [kfc, best_buy, pizza_hut],
@@ -50,7 +51,7 @@ export default function Tab() {
   const [couponMap, setCouponMap] = useState(couponsByStreak[streak]);
 
   useEffect(() => {
-    let maxKey = 1;
+    let maxKey = 0;
     for (const key in couponsByStreak) {
       if (parseInt(key) <= streak) {
         maxKey = Math.max(maxKey, parseInt(key));
@@ -145,13 +146,13 @@ export default function Tab() {
             </View>
           </View>
           <View className="flex flex-row w-[90%] align-center justify-between">
-            <Text className="font-semibold text-base">Your Mission</Text>
+            <Text className="font-semibold text-base">Your Coupons</Text>
             <View className="flex flex-row gap-3">
               <FontAwesome name="angle-left" size={24} color="black" />
               <FontAwesome name="angle-right" size={24} color="black" />
             </View>
           </View>
-          <View className="flex w-[90%] h-[180px] shadow-3xl">
+          <View className="flex w-[90%] h-[120px] shadow-3xl">
             <PagerView
               className="flex-1"
               initialPage={0}
@@ -159,7 +160,11 @@ export default function Tab() {
               {couponMap?.map((coupon, index) => (
                 <Image
                   source={coupon}
-                  className="bg-cover rounded-xl w-[100%] h-[100%]"
+                  resizeMode="contain" // Adjust the resizeMode here
+                  style={{
+                    ...index === 0 ? { opacity: 0.5 } : {}, // Dim out the image at index 1
+                  }}
+                  className="justify-center items-center rounded-xl w-full h-full"
                   key={index}
                 />
               ))}
@@ -168,7 +173,7 @@ export default function Tab() {
           <View className="flex w-[90%]">
             <PageIndicator
               className="mr-"
-              count={3}
+              count={couponMap.length}
               current={currentPic}
               variant="beads"
             />
