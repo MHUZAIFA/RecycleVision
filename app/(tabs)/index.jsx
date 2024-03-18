@@ -26,6 +26,7 @@ import PieGraph from "../(components)/PieGraph";
 import SupportBanner from "../(components)/SupportBanner";
 import best_buy from "../../assets/coupons/BEST_BUY.png";
 import kfc from "../../assets/coupons/KFC.png";
+import coupon_lock_1 from "../../assets/coupons/STREAK_LOCKED_1.png";
 import kfc_locked from "../../assets/coupons/KFC_LOCKED.png";
 import pizza_hut from "../../assets/coupons/PIZZA_HUT.png";
 import starbucks from "../../assets/coupons/STARBUCKS.png";
@@ -42,7 +43,7 @@ export default function Tab() {
 
   // using Fibonacci sequence to determine the #scans needed to reach the next level
   const couponsByStreak = {
-    0: [kfc_locked],
+    0: [kfc_locked, coupon_lock_1],
     1: [kfc],
     2: [kfc, best_buy],
     3: [kfc, best_buy, pizza_hut],
