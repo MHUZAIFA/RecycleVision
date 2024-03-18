@@ -25,12 +25,15 @@ import LineGraph from "../(components)/LineGraph";
 import PieGraph from "../(components)/PieGraph";
 import SupportBanner from "../(components)/SupportBanner";
 import best_buy from "../../assets/coupons/BEST_BUY.png";
+import best_buy_locked from "../../assets/coupons/BEST_BUY_LOCKED.png";
 import kfc from "../../assets/coupons/KFC.png";
-import coupon_lock_1 from "../../assets/coupons/STREAK_LOCKED_1.png";
 import kfc_locked from "../../assets/coupons/KFC_LOCKED.png";
 import pizza_hut from "../../assets/coupons/PIZZA_HUT.png";
+import pizza_hut_locked from "../../assets/coupons/PIZZA_HUT_LOCKED.png";
 import starbucks from "../../assets/coupons/STARBUCKS.png";
+import starbucks_locked from "../../assets/coupons/STARBUCKS_LOCKED.png";
 import walmart from "../../assets/coupons/WALMART.png";
+import walmart_locked from "../../assets/coupons/WALMART_LOCKED.png";
 import icon from "../../assets/favicon.png";
 
 export default function Tab() {
@@ -43,12 +46,12 @@ export default function Tab() {
 
   // using Fibonacci sequence to determine the #scans needed to reach the next level
   const couponsByStreak = {
-    0: [kfc_locked, coupon_lock_1],
-    1: [kfc],
-    2: [kfc, best_buy],
-    3: [kfc, best_buy, pizza_hut],
-    5: [kfc, best_buy, pizza_hut, walmart],
-    8: [kfc, best_buy, pizza_hut, walmart, starbucks],
+    0: [kfc_locked, best_buy_locked, walmart_locked, starbucks_locked, pizza_hut_locked],
+    1: [kfc,best_buy_locked, walmart_locked, starbucks_locked, pizza_hut_locked],
+    2: [kfc, best_buy, walmart_locked, starbucks_locked, pizza_hut_locked],
+    3: [kfc, best_buy, walmart, starbucks_locked, pizza_hut_locked],
+    5: [kfc, best_buy, walmart, starbucks, pizza_hut_locked],
+    8: [kfc, best_buy, walmart, starbucks, pizza_hut],
   };
   const [couponMap, setCouponMap] = useState(couponsByStreak[streak]);
 
@@ -93,37 +96,6 @@ export default function Tab() {
   };
 
   const getScansToNextLevelText = () => {
-    const left = nextLevelScans - nbrOfScans;
-    if (left === 1) {
-      return "1 scan to ";
-    }
-    return `${left} scans to `;
-  };
-
-  const getCouponText = () => {
-    switch (streak) {
-      case 0:
-        return "Next coupon unlocked at streak 1";
-      case 1:
-        return "Next coupon unlocked at streak 2";
-      case 2:
-        return "Next coupon unlocked at streak 3";
-      case 3:
-          return "Next coupon unlocked at streak 5";
-      case 4:
-          return "Next coupon unlocked at streak 5";
-      case 5:
-          return "Next coupon unlocked at streak 8";
-      case 6:
-          return "Next coupon unlocked at streak 8";  
-      case 7:
-            return "Next coupon unlocked at streak 8";
-      default:
-        return "";
-    }
-  };
-
-  const getScansToNextCouponText = () => {
     const left = nextLevelScans - nbrOfScans;
     if (left === 1) {
       return "1 scan to ";
@@ -179,22 +151,21 @@ export default function Tab() {
             </View>
           </View>
           <View className="flex flex-row w-[90%] align-center justify-between">
-            <Text className="font-semibold text-base">Your Coupons</Text>
-            {/* <View className="flex flex-row gap-3">
+            <Text className="font-semibold text-base">Coupons</Text>
+            <View className="flex flex-row gap-3">
               <FontAwesome name="angle-left" size={24} color="black" />
               <FontAwesome name="angle-right" size={24} color="black" />
-            </View> */}
-            {
+            </View>
+            {/* {
               streak > 1 && (
                 <View className="flex flex-row gap-3">
                   <FontAwesome name="angle-left" size={24} color="black" />
                   <FontAwesome name="angle-right" size={24} color="black" />
                 </View>
               )
-            }
+            } */}
           </View>
           <View className="flex w-[90%] h-[120px] shadow-3xl">
-          <Text className="text-sm">{getCouponText()}</Text>
             <PagerView
               className="flex-1"
               initialPage={0}
@@ -203,17 +174,15 @@ export default function Tab() {
                 <Image
                   source={coupon}
                   resizeMode="contain" // Adjust the resizeMode here
-                  style={{
-                    ...index === 0 ? { opacity: 0.5 } : {}, // Dim out the image at index 1
-                  }}
+                  // style={{
+                  //   ...index === 0 ? { opacity: 0.5 } : {}, // Dim out the image at index 1
+                  // }}
                   className="justify-center items-center rounded-xl w-full h-full"
                   key={index}
                 />
               ))}
             </PagerView>
           </View>
-          {
-          streak > 1 && (
           <View className="flex w-[90%]">
             <PageIndicator
               className="mr-"
@@ -221,8 +190,7 @@ export default function Tab() {
               current={currentPic}
               variant="beads"
             />
-          </View>)
-          }
+          </View>
           <View className="flex-col w-screen space-y-1.25">
             <LineGraph />
           </View>
