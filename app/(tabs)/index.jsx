@@ -26,6 +26,7 @@ import PieGraph from "../(components)/PieGraph";
 import SupportBanner from "../(components)/SupportBanner";
 import best_buy from "../../assets/coupons/BEST_BUY.png";
 import kfc from "../../assets/coupons/KFC.png";
+import kfc_locked from "../../assets/coupons/KFC_LOCKED.png";
 import pizza_hut from "../../assets/coupons/PIZZA_HUT.png";
 import starbucks from "../../assets/coupons/STARBUCKS.png";
 import walmart from "../../assets/coupons/WALMART.png";
@@ -41,7 +42,7 @@ export default function Tab() {
 
   // using Fibonacci sequence to determine the #scans needed to reach the next level
   const couponsByStreak = {
-    0: [kfc],
+    0: [kfc_locked],
     1: [kfc],
     2: [kfc, best_buy],
     3: [kfc, best_buy, pizza_hut],
@@ -98,6 +99,37 @@ export default function Tab() {
     return `${left} scans to `;
   };
 
+  const getCouponText = () => {
+    switch (streak) {
+      case 0:
+        return "1 day to unlock coupon";
+      case 1:
+        return "1 day to unlock next coupon";
+      case 2:
+        return "1 day to unlock coupon";
+      case 3:
+          return "2 day to unlock next coupon";
+      case 4:
+          return "1 day to unlock next coupon";
+      case 5:
+          return "3 day to unlock next coupon";
+      case 6:
+          return "2 day to unlock next coupon";  
+      case 7:
+            return "1 day to unlock next coupon";
+      default:
+        return "";
+    }
+  };
+
+  const getScansToNextCouponText = () => {
+    const left = nextLevelScans - nbrOfScans;
+    if (left === 1) {
+      return "1 scan to ";
+    }
+    return `${left} scans to `;
+  };
+
   useEffect(() => {
     getNbrOfScans().then((nbrOfScans) => {
       setNbrOfScans(nbrOfScans);
@@ -147,12 +179,21 @@ export default function Tab() {
           </View>
           <View className="flex flex-row w-[90%] align-center justify-between">
             <Text className="font-semibold text-base">Your Coupons</Text>
-            <View className="flex flex-row gap-3">
+            {/* <View className="flex flex-row gap-3">
               <FontAwesome name="angle-left" size={24} color="black" />
               <FontAwesome name="angle-right" size={24} color="black" />
-            </View>
+            </View> */}
+            {
+              streak > 1 && (
+                <View className="flex flex-row gap-3">
+                  <FontAwesome name="angle-left" size={24} color="black" />
+                  <FontAwesome name="angle-right" size={24} color="black" />
+                </View>
+              )
+            }
           </View>
           <View className="flex w-[90%] h-[120px] shadow-3xl">
+          <Text className="text-sm">{getCouponText()}</Text>
             <PagerView
               className="flex-1"
               initialPage={0}
@@ -170,6 +211,8 @@ export default function Tab() {
               ))}
             </PagerView>
           </View>
+          {
+          streak > 1 && (
           <View className="flex w-[90%]">
             <PageIndicator
               className="mr-"
@@ -177,7 +220,8 @@ export default function Tab() {
               current={currentPic}
               variant="beads"
             />
-          </View>
+          </View>)
+          }
           <View className="flex-col w-screen space-y-1.25">
             <LineGraph />
           </View>
