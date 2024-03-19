@@ -1,4 +1,12 @@
 import {
+  deleteDatabase,
+  getLevel,
+  getNbrOfScans,
+  getStreak,
+} from "@/lib/gamification/dbUtils";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useEffect, useState } from "react";
+import {
   Alert,
   Dimensions,
   Image,
@@ -10,15 +18,24 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { PageIndicator } from "react-native-page-indicator";
 import PagerView from "react-native-pager-view";
 import { Bar } from "react-native-progress";
-import SupportBanner from "../(components)/SupportBanner";
 import LineGraph from "../(components)/LineGraph";
 import PieGraph from "../(components)/PieGraph";
+import SupportBanner from "../(components)/SupportBanner";
+import best_buy from "../../assets/coupons/BEST_BUY.png";
+import best_buy_locked from "../../assets/coupons/BEST_BUY_LOCKED.png";
+import kfc from "../../assets/coupons/KFC.png";
+import kfc_locked from "../../assets/coupons/KFC_LOCKED.png";
+import pizza_hut from "../../assets/coupons/PIZZA_HUT.png";
+import pizza_hut_locked from "../../assets/coupons/PIZZA_HUT_LOCKED.png";
+import starbucks from "../../assets/coupons/STARBUCKS.png";
+import starbucks_locked from "../../assets/coupons/STARBUCKS_LOCKED.png";
+import walmart from "../../assets/coupons/WALMART.png";
+import walmart_locked from "../../assets/coupons/WALMART_LOCKED.png";
 import icon from "../../assets/favicon.png";
-import pizza from "../../assets/pizza.png";
-import offer from "../../assets/offer.png";
-import month from "../../assets/month.png";
+
 import { PageIndicator } from "react-native-page-indicator";
 import {
   deleteDatabase,
@@ -39,6 +56,27 @@ export default function Tab() {
   const [nextTitle, setNextTitle] = useState("Eco Warrior II");
   const [currentPic, setCurrentPic] = useState(0);
   const [profielPic, setProfilePic] = useState(null);
+
+  // using Fibonacci sequence to determine the #scans needed to reach the next level
+  const couponsByStreak = {
+    0: [kfc_locked, best_buy_locked, walmart_locked, starbucks_locked, pizza_hut_locked],
+    1: [kfc,best_buy_locked, walmart_locked, starbucks_locked, pizza_hut_locked],
+    2: [kfc, best_buy, walmart_locked, starbucks_locked, pizza_hut_locked],
+    3: [kfc, best_buy, walmart, starbucks_locked, pizza_hut_locked],
+    5: [kfc, best_buy, walmart, starbucks, pizza_hut_locked],
+    8: [kfc, best_buy, walmart, starbucks, pizza_hut],
+  };
+  const [couponMap, setCouponMap] = useState(couponsByStreak[streak]);
+
+  useEffect(() => {
+    let maxKey = 0;
+    for (const key in couponsByStreak) {
+      if (parseInt(key) <= streak) {
+        maxKey = Math.max(maxKey, parseInt(key));
+      }
+    }
+    setCouponMap(couponsByStreak[maxKey]);
+  }, [streak]);
 
   const onPressDelete = () => {
     Alert.alert(
@@ -62,7 +100,7 @@ export default function Tab() {
   const getStreakText = () => {
     switch (streak) {
       case 0:
-        return "No streak";
+        return "0";
       case 1:
         return "1 Day";
       default:
@@ -150,35 +188,31 @@ export default function Tab() {
             </View>
           </View>
           <View className="flex flex-row w-[90%] align-center justify-between">
-            <Text className="font-semibold text-base">Your Mission</Text>
+            <Text className="font-semibold text-base">Coupons</Text>
             <View className="flex flex-row gap-3">
               <FontAwesome name="angle-left" size={24} color="black" />
               <FontAwesome name="angle-right" size={24} color="black" />
             </View>
           </View>
-          <View className="flex w-[90%] h-[180px] shadow-3xl">
+          <View className="flex w-[90%] h-[120px] shadow-3xl">
             <PagerView
               className="flex-1"
               initialPage={0}
               onPageSelected={(e) => setCurrentPic(e.nativeEvent.position)}>
-              <Image
-                source={pizza}
-                className="justify-center items-center bg-cover rounded-xl"
-                key="1"></Image>
-              <Image
-                source={month}
-                className="justify-center items-center bg-cover rounded-xl"
-                key="2"></Image>
-              <Image
-                source={offer}
-                className="justify-center items-center bg-cover rounded-xl"
-                key="3"></Image>
+              {couponMap?.map((coupon, index) => (
+                <Image
+                  source={coupon}
+                  resizeMode="contain" // Adjust the resizeMode here
+                  className="justify-center items-center rounded-xl w-full h-full"
+                  key={index}
+                />
+              ))}
             </PagerView>
           </View>
           <View className="flex w-[90%]">
             <PageIndicator
               className="mr-"
-              count={3}
+              count={couponMap.length}
               current={currentPic}
               variant="beads"
             />

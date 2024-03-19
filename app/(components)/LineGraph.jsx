@@ -1,7 +1,7 @@
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { Text, View } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 import { LineData } from "../../assets/data/info";
-import { Text, View } from "react-native";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 const LineGraph = () => {
   return (
