@@ -9,7 +9,9 @@ import {
   Pressable,
   Text,
   TouchableOpacity,
-  View
+  View,
+  Modal,
+  StyleSheet
 } from "react-native";
 import BarcodeMask from "react-native-barcode-mask";
 
@@ -137,6 +139,7 @@ export default function CameraScreen() {
         setPrediction(null);
         setError("No results found. Please try again.");
       }
+      setBottomSheetVisible(true);
     } catch (e) {
       setError("Error from API. Please try again.");
       console.log("Failed API", e);
@@ -250,7 +253,7 @@ export default function CameraScreen() {
     );
   };
 
-  const Error = ({error}) => {
+  const Error = ({ error }) => {
     return (
       <View
         className="absolute top-1/2 left-0 right-0 h-24 -mt-6
@@ -260,19 +263,254 @@ export default function CameraScreen() {
     );
   };
 
+  const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
+
+  const closeBottomSheet = async () => {
+    setBottomSheetVisible(false);
+    cancelPreview();
+  };
+
+  const styles = StyleSheet.create({
+    container: {
+      // flex: 1,
+      // justifyContent: 'center',
+      // alignItems: 'center',
+      // backgroundColor: 'red',
+    },
+    modalOverlay: {
+      flex: 1,
+      justifyContent: 'flex-end',
+    },
+    bottomSheet: {
+      backgroundColor: '#ffffff',
+      padding: 20,
+      paddingVertical: 20,
+      borderTopLeftRadius: 30,
+      borderTopRightRadius: 30,
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+
+      elevation: 5,
+
+      maxHeight: '90%',
+
+    },
+    bottomSheetTitle: {
+      fontSize: 20,
+      fontWeight: 'bold',
+    },
+    bottomSheetDescription: {
+      fontSize: 15,
+      marginTop: 10,
+    },
+    bottomSheetRecommendation: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: '#6342E8',
+      marginTop: 10,
+      textTransform: 'capitalize'
+    },
+    bottomSuggestedBinTitle: {
+      fontSize: 17,
+      fontWeight: '500',
+      marginTop: 10,
+    },
+    bottomSheetBinDescription: {
+      fontSize: 15,
+      marginTop: 10,
+    },
+    closeButton: {
+      marginTop: 20,
+      backgroundColor: '#6342E8',
+      alignSelf: 'center',
+      width: '100%',
+      padding: 17,
+      borderRadius: 5,
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 3,
+      },
+      shadowOpacity: 0.29,
+      shadowRadius: 4.65,
+
+      elevation: 7,
+    },
+    closeButtonText: {
+      color: 'white',
+      fontSize: 15,
+      alignSelf: 'center'
+    },
+    bottomSheetBinTitle: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      marginTop: 10,
+      textTransform: 'capitalize'
+  },
+  blueBin: {
+      color: '#0077c8'
+  },
+  greenBin: {
+      color: '#228B22'
+  },
+  brownBin: {
+      color: 'brown'
+  },
+  blackBin: {
+      color: 'black'
+  }
+  });
+
+  // Function to render bin title with appropriate color style
+const BinTitle = ({ binType }) => {
+  let colorStyle;
+  switch (binType) {
+      case BinType.BLUE:
+          colorStyle = styles.blueBin;
+          break;
+      case BinType.GREEN:
+          colorStyle = styles.greenBin;
+          break;
+      case BinType.BROWN:
+          colorStyle = styles.brownBin;
+          break;
+      case BinType.BLACK:
+          colorStyle = styles.blackBin;
+          break;
+      default:
+          colorStyle = {}; // Default style if bin type not found
+  }
+
+  return (
+      <Text style={[styles.bottomSheetBinTitle, colorStyle]}>
+          {binType} Bin
+      </Text>
+  );
+};
+
+  const BottomSheet = ({ isVisible, onClose, prediction }) => {
+    const classification = Object.keys(prediction)[0];
+    const confidence = prediction[classification];
+
+    const {binType, recyclability} = retrieveBinAndRecyclability(classification);
+    console.log(binType);
+    console.log(recyclability);
+    return (
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isVisible}
+        onRequestClose={onClose}
+      >
+        <TouchableOpacity
+          activeOpacity={1}
+          style={styles.modalOverlay}
+        >
+          <View style={styles.bottomSheet}>
+            <Text style={styles.bottomSheetTitle}>
+              {recyclability}
+            </Text>
+            <Text style={styles.bottomSheetDescription}>
+            The item has been identified as belonging to the classification of type {classification}.
+            </Text>
+            <Text style={styles.bottomSuggestedBinTitle}>
+              The suggested bin is:
+            </Text>
+            <BinTitle binType={binType} />
+            <Text style={styles.bottomSheetBinDescription}>
+            {getBinDescription(binType)}
+            </Text>
+            <TouchableOpacity onPress={onClose} style={styles.closeButton}>
+              <Text style={styles.closeButtonText}>Dismiss</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
+    );
+  };
+
   const Prediction = ({ prediction }) => {
-    const label = Object.keys(prediction)[0];
-    const confidence = prediction[label];
+    const classification = Object.keys(prediction)[0];
+    const confidence = prediction[classification];
+
+    const binType = retrieveBinAndRecyclability(classification);
+    console.log(binType);
+
 
     return (
       <View
         className="absolute top-1/2 left-0 right-0 h-24 -mt-6 flex
                   items-center justify-center bg-black bg-opacity-50 px-4">
         <Text className="text-white font-bold text-2xl">
-          {label} - {confidence}%
+          {classification} - {confidence}%
         </Text>
       </View>
     );
+  };
+
+  // Define enum for bin types
+  const BinType = {
+    BLUE: 'blue',
+    GREEN: 'green',
+    BROWN: 'brown',
+    BLACK: 'black'
+  };
+
+  // Define enum for recyclability
+  const Recyclability = {
+    RECYCLABLE: 'Recyclable',
+    NON_RECYCLABLE: 'Non Recyclable'
+  };
+
+  // Define dictionary with bin types, recyclability, and corresponding items
+  const binItems = {
+    [BinType.BLUE]: {
+      items: ['paper', 'cardboard'],
+      recyclability: Recyclability.RECYCLABLE
+    },
+    [BinType.GREEN]: {
+      items: ['plastic', 'metal'],
+      recyclability: Recyclability.RECYCLABLE
+    },
+    [BinType.BROWN]: {
+      items: ['organics'],
+      recyclability: Recyclability.RECYCLABLE
+    },
+    [BinType.BLACK]: {
+      items: ['trash'],
+      recyclability: Recyclability.NON_RECYCLABLE
+    }
+  };
+
+  // Function to retrieve bin type and recyclability for an item
+  // return type: { binType: "blue", recyclability: "recyclable" }
+  const retrieveBinAndRecyclability = (item) => {
+    for (const binType in binItems) {
+      if (binItems[binType].items.includes(item.toLowerCase())) {
+        return { binType, recyclability: binItems[binType].recyclability };
+      }
+    }
+    return { binType: null, recyclability: null }; // Return null if item not classified
+  }
+
+  const getBinDescription = (binType) => {
+    switch (binType) {
+      case 'blue':
+        return "Blue Bin is typically used for recycling. Items such as paper, cardboard, plastic bottles, glass bottles, and aluminum cans are commonly placed in blue bins for recycling purposes. It's important to check local guidelines to know exactly what can and cannot be recycled in your area.";
+      case 'green':
+        return "Green Bin is often designated for organic waste or compostable materials. This includes food scraps, yard waste (like grass clippings and leaves), and other biodegradable materials. Composting these items helps divert organic waste from landfills and can be used to create nutrient-rich soil amendments.";
+      case 'brown':
+        return "In some areas, the brown bin might be used for organic waste or garden waste similar to the green bin. However, in other places, it might be used for other specific types of waste, such as hazardous materials or electronics. Again, it's essential to check local regulations.";
+      case 'black':
+        return "Black Bin is typically used for general or residual waste that cannot be recycled or composted. This includes items like non-recyclable plastics, certain types of packaging, and other household waste that cannot be placed in the recycling or compost bins.";
+      default:
+        return 'Bin type not recognized.';
+    }
   };
 
   return (
@@ -291,13 +529,19 @@ export default function CameraScreen() {
               {!isPreview ? (
                 <CaptureControl />
               ) : (
-                isPreview && <ConfirmationPhase />
+                <ConfirmationPhase />
               )}
             </View>
           </Camera>
           {isLoading && <Loading />}
           {error && <Error error={error} />}
-          {prediction && <Prediction prediction={prediction} />}
+          {prediction && <View style={styles.container}>
+            {/* <TouchableOpacity onPress={toggleBottomSheet}>
+              <Text>Open Bottom Sheet</Text>
+            </TouchableOpacity> */}
+            <BottomSheet isVisible={bottomSheetVisible} onClose={closeBottomSheet} prediction={prediction} />
+          </View>}
+          {/* {prediction && <Prediction prediction={prediction} />} */}
         </>
       ) : !permission.granted ? (
         <RenderRequestPermission />
