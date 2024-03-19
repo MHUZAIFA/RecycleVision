@@ -193,14 +193,6 @@ export default function Tab() {
               <FontAwesome name="angle-left" size={24} color="black" />
               <FontAwesome name="angle-right" size={24} color="black" />
             </View>
-            {/* {
-              streak > 1 && (
-                <View className="flex flex-row gap-3">
-                  <FontAwesome name="angle-left" size={24} color="black" />
-                  <FontAwesome name="angle-right" size={24} color="black" />
-                </View>
-              )
-            } */}
           </View>
           <View className="flex w-[90%] h-[120px] shadow-3xl">
             <PagerView
@@ -211,9 +203,6 @@ export default function Tab() {
                 <Image
                   source={coupon}
                   resizeMode="contain" // Adjust the resizeMode here
-                  // style={{
-                  //   ...index === 0 ? { opacity: 0.5 } : {}, // Dim out the image at index 1
-                  // }}
                   className="justify-center items-center rounded-xl w-full h-full"
                   key={index}
                 />
