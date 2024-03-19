@@ -11,6 +11,7 @@ module.exports = {
     extend: {
       colors: {
         progress: "#6342E8",
+        background: "#F7F7F7",
       },
     },
   },

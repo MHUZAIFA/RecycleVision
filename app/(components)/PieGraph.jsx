@@ -7,6 +7,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 const PieGraph = () => {
   const [pieData, setPieData] = useState({});
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [nbrOfScans, setNbrOfScans] = useState(0);
 
   useEffect(() => {
@@ -14,10 +15,15 @@ const PieGraph = () => {
     getPieData().then(data => {
       setPieData(data);
       setLoading(false);
+    }).catch(err => {
+      setError(err.message);
+      setLoading(false);
     });
 
     getNbrOfScans().then(scans => {
       setNbrOfScans(scans);
+    }).catch(err => {
+      setError(err.message);
     });
   }, []);
 
@@ -37,7 +43,20 @@ const PieGraph = () => {
   }));
 
   if (loading) {
-    return <ActivityIndicator size="large" color="#0000ff" />;
+    return (
+      <View>
+        <ActivityIndicator size="large" color="#6342E8" />
+        <Text>Loading data...</Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    return <Text>Error: {error}</Text>;
+  }
+
+  if (!chartData.length) {
+    return <Text>No data available</Text>;
   }
 
   return (
