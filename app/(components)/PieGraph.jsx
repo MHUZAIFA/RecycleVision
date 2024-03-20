@@ -1,59 +1,31 @@
-import { useEffect, useState } from 'react';
-import { getPieData, getNbrOfScans } from '@/lib/gamification/dbUtils';
 import { PieChart } from "react-native-chart-kit";
-import { Text, View, ActivityIndicator } from "react-native";
+import { Text, View } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 
-const PieGraph = () => {
-  const [pieData, setPieData] = useState({});
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [nbrOfScans, setNbrOfScans] = useState(0);
+const PieGraph = (props) => {
+const colorMapping = {
+  'cardboard/paper': '#0000FF',
+  'M/G/P': '#008000',
+  'organic': '#A52A2A',
+  'trash': '#000000'
+};
 
-  useEffect(() => {
-    setLoading(true);
-    getPieData().then(data => {
-      setPieData(data);
-      setLoading(false);
-    }).catch(err => {
-      setError(err.message);
-      setLoading(false);
-    });
+const chartData = Object.keys(props.pieData).map(key => {
+  let newKey = key;
 
-    getNbrOfScans().then(scans => {
-      setNbrOfScans(scans);
-    }).catch(err => {
-      setError(err.message);
-    });
-  }, []);
+  // Rename the keys
+  if (key === 'metal/glass/plastic') {
+    newKey = 'M/G/P';
+  }
 
-  const colorMapping = {
-    'cardboard/paper': '#0000FF',
-    'metal/glass': '#008000',
-    'organic': '#A52A2A',
-    'plastic': '#FFFF00'
-  };
-
-  const chartData = Object.keys(pieData).map(key => ({
-    name: key,
-    population: pieData[key],
-    color: colorMapping[key],
+  return {
+    name: newKey,
+    population: props.pieData[key],
+    color: colorMapping[newKey],
     legendFontColor: '#7F7F7F',
     legendFontSize: 12,
-  }));
-
-  if (loading) {
-    return (
-      <View>
-        <ActivityIndicator size="large" color="#6342E8" />
-        <Text>Loading data...</Text>
-      </View>
-    );
-  }
-
-  if (error) {
-    return <Text>Error: {error}</Text>;
-  }
+  };
+});
 
   if (!chartData.length) {
     return <Text>No data available</Text>;
@@ -63,7 +35,7 @@ const PieGraph = () => {
     <View className="w-[355px] h-[335px] flex flex-col rounded-xl border-2 border-gray-400">
       <View className="flex flex-row justify-between w-[100%] h-[33%] p-8">
         <View className="flex-col justify-center">
-          <Text className="text-3xl font-semibold">{nbrOfScans}</Text>
+          <Text className="text-3xl font-semibold">{props.nbrOfScans}</Text>
           <Text className="text-sm text-gray-500">Types of Items Scanned</Text>
         </View>
         <FontAwesome name="info-circle" size={26} color="black" />

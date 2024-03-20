@@ -4,6 +4,7 @@ import {
   getNbrOfScans,
   getScansPerDate,
   getStreak,
+  getPieData
 } from "@/lib/gamification/dbUtils";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -50,6 +51,7 @@ export default function Tab() {
   const [loading, setLoading] = useState(false);
   const [lineData, setLineData] = useState(LineData);
   const navigation = usePathname();
+  const [pieData, setPieData] = useState({});
 
   // using Fibonacci sequence to determine the #scans needed to reach the next level
   const couponsByStreak = {
@@ -162,6 +164,10 @@ export default function Tab() {
     });
 
     getPic();
+
+    getPieData().then(data => {
+      setPieData(data);
+    });
   }, [navigation]);
 
   useEffect(() => {
@@ -232,7 +238,7 @@ export default function Tab() {
             <LineGraph nbrOfScans={nbrOfScans} lineData={lineData} />
           </View>
           <View className="flex-col w-screen space-y-1.25">
-            <PieGraph />
+            <PieGraph nbrOfScans={nbrOfScans} pieData={pieData}/>
           </View>
           <View className="flex-col w-screen space-y-1.25">
             <SupportBanner />
