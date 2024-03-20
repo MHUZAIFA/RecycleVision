@@ -239,9 +239,7 @@ export default function CameraScreen() {
   };
 
   const ConfirmationPhase = () => {
-    return prediction ? (
-      <CancelPreview />
-    ) : (
+    return (
       <View
         className={clsx(
           "bottom-10 justify-between items-center flex-1 flex-row mx-16 p-2 rounded-xl shadow-xl",

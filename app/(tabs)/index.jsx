@@ -95,7 +95,6 @@ export default function Tab() {
       [
         {
           text: "Cancel",
-          onPress: () => console.log("Cancel Pressed"),
           style: "cancel",
         },
         {
@@ -161,7 +160,6 @@ export default function Tab() {
     };
 
     getScansPerDate().then((data) => {
-      console.log("data", data);
       setLineData(data);
     });
 

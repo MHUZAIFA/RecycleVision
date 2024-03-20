@@ -23,7 +23,7 @@
     "space-infix-ops": "error",
     "no-var": "error",
     "no-empty": "off",
-    "prefer-const": "warn",
+    "prefer-const": "off",
     "object-shorthand": "error",
     "no-unused-vars": "warn",
     "no-array-constructor": "error",
