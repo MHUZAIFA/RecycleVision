@@ -11,7 +11,6 @@ const LineGraph = (props) => {
           <Text className="text-3xl font-semibold">{props.nbrOfScans}</Text>
           <Text className="text-sm text-gray-500">Items scanned</Text>
         </View>
-        <FontAwesome name="info-circle" size={26} color="black" />
       </View>
       <LineChart
         data={props.lineData}
