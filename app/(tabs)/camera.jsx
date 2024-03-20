@@ -625,9 +625,7 @@ export default function CameraScreen() {
       ) : !permission.granted ? (
         <RenderRequestPermission />
       ) : (
-        <View className="flex-1 items-center justify-center">
-          <Text className="text-center">Loading...</Text>
-        </View>
+        <Loading />
       )}
     </View>
   );
