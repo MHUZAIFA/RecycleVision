@@ -212,7 +212,8 @@ export default function CameraScreen() {
                 {
                   borderWidth: 5,
                   borderRadius: 75,
-                  borderColor: "#f7f7f7",
+                  borderColor: "#cccccc",
+                  opacity: 0.8,
                   height: 75,
                   width: 75,
                   display: "flex",
