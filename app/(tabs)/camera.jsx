@@ -9,12 +9,12 @@ import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Animated,
-  Modal,
   Pressable,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
+  Modal,
+  StyleSheet
 } from "react-native";
 import BarcodeMask from "react-native-barcode-mask";
 
@@ -291,6 +291,100 @@ export default function CameraScreen() {
     resetCameraScreen();
   };
 
+  const styles = StyleSheet.create({
+    container: {
+      // flex: 1,
+      // justifyContent: 'center',
+      // alignItems: 'center',
+      // backgroundColor: 'red',
+    },
+    modalOverlay: {
+      flex: 1,
+      justifyContent: 'flex-end',
+    },
+    bottomSheet: {
+      backgroundColor: '#ffffff',
+      padding: 20,
+      borderTopLeftRadius: 30,
+      borderTopRightRadius: 30,
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84,
+
+      elevation: 5,
+
+      maxHeight: '90%',
+
+    },
+    bottomSheetTitle: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: '#373737'
+    },
+    bottomSheetDescription: {
+      fontSize: 15,
+      marginTop: 10,
+    },
+    bottomSheetRecommendation: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: '#6342E8',
+      marginTop: 10,
+      textTransform: 'capitalize'
+    },
+    bottomSuggestedBinTitle: {
+      fontSize: 17,
+      fontWeight: '500',
+      marginTop: 10,
+    },
+    bottomSheetBinDescription: {
+      fontSize: 15,
+    },
+    closeButton: {
+      marginTop: 20,
+      backgroundColor: '#000',
+      alignSelf: 'center',
+      width: '100%',
+      padding: 17,
+      borderRadius: 5,
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 3,
+      },
+      shadowOpacity: 0.29,
+      shadowRadius: 4.65,
+
+      elevation: 7,
+    },
+    closeButtonText: {
+      color: 'white',
+      fontSize: 15,
+      alignSelf: 'center'
+    },
+    bottomSheetBinTitle: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      textTransform: 'capitalize'
+    },
+    blueBin: {
+      color: '#0077c8'
+    },
+    greenBin: {
+      color: '#228B22'
+    },
+    orangeBin: {
+      color: 'orangered'
+    },
+    blackBin: {
+      color: '#171717'
+    }
+  });
+
   // Function to render bin title with appropriate color style
   const BinTitle = ({ binType }) => {
     let colorStyle;
@@ -301,8 +395,8 @@ export default function CameraScreen() {
       case BinType.GREEN:
         colorStyle = styles.greenBin;
         break;
-      case BinType.BROWN:
-        colorStyle = styles.brownBin;
+      case BinType.Orange:
+        colorStyle = styles.orangeBin;
         break;
       case BinType.BLACK:
         colorStyle = styles.blackBin;
@@ -312,33 +406,45 @@ export default function CameraScreen() {
     }
 
     return (
-      <Text style={[styles.bottomSheetBinTitle, colorStyle]}>
-        {binType} Bin
-      </Text>
+      <>
+        <Text style={{ fontSize: 14, color: '#808080', marginTop: 10, fontWeight: '400' }}>
+          Place in:
+        </Text>
+        <Text style={[styles.bottomSheetBinTitle, colorStyle]}>
+          {binType} Bin
+        </Text>
+        <View
+          style={{
+            borderBottomColor: '#D9D9D9',
+            borderBottomWidth: 2,
+            marginVertical: 15
+          }}
+        />
+      </>
     );
   };
 
   const BottomSheet = ({ isVisible, onClose, prediction }) => {
     const classification = Object.keys(prediction)[0];
 
-    const { binType, recyclability } =
-      retrieveBinAndRecyclability(classification);
-
+    const { binType, recyclability } = retrieveBinAndRecyclability(classification);
+    
     return (
       <Modal
         animationType="slide"
         transparent={true}
         visible={isVisible}
-        onRequestClose={onClose}>
-        <TouchableOpacity activeOpacity={1} style={styles.modalOverlay}>
+        onRequestClose={onClose}
+      >
+        <TouchableOpacity
+          activeOpacity={1}
+          style={styles.modalOverlay}
+        >
           <View style={styles.bottomSheet}>
-            <Text style={styles.bottomSheetTitle}>{recyclability}</Text>
-            <Text style={styles.bottomSheetDescription}>
-              The item has been identified as belonging to the classification of
-              type {classification}.
-            </Text>
-            <Text style={styles.bottomSuggestedBinTitle}>
-              The suggested bin is:
+            <Text style={styles.bottomSheetTitle}>
+              {recyclability} <Text style={{ fontWeight: '500', textTransform: 'capitalize', color: '#565656', fontSize: 14 }}>
+                ({classification})
+              </Text>
             </Text>
             <BinTitle binType={binType} />
             <Text style={styles.bottomSheetBinDescription}>
@@ -355,36 +461,36 @@ export default function CameraScreen() {
 
   // Define enum for bin types
   const BinType = {
-    BLUE: "blue",
-    GREEN: "green",
-    BROWN: "brown",
-    BLACK: "black",
+    BLUE: 'blue',
+    GREEN: 'green',
+    Orange: 'orange',
+    BLACK: 'black'
   };
 
   // Define enum for recyclability
   const Recyclability = {
-    RECYCLABLE: "Recyclable",
-    NON_RECYCLABLE: "Non Recyclable",
+    RECYCLABLE: 'Recyclable',
+    NON_RECYCLABLE: 'Non Recyclable'
   };
 
   // Define dictionary with bin types, recyclability, and corresponding items
   const binItems = {
     [BinType.BLUE]: {
-      items: ["paper", "cardboard"],
-      recyclability: Recyclability.RECYCLABLE,
+      items: ['paper', 'cardboard'],
+      recyclability: Recyclability.RECYCLABLE
     },
     [BinType.GREEN]: {
-      items: ["plastic", "metal"],
-      recyclability: Recyclability.RECYCLABLE,
+      items: ['plastic', 'metal'],
+      recyclability: Recyclability.RECYCLABLE
     },
-    [BinType.BROWN]: {
-      items: ["organics"],
-      recyclability: Recyclability.RECYCLABLE,
+    [BinType.Orange]: {
+      items: ['organics'],
+      recyclability: Recyclability.RECYCLABLE
     },
     [BinType.BLACK]: {
-      items: ["trash"],
-      recyclability: Recyclability.NON_RECYCLABLE,
-    },
+      items: ['trash'],
+      recyclability: Recyclability.NON_RECYCLABLE
+    }
   };
 
   // Function to retrieve bin type and recyclability for an item
@@ -400,16 +506,82 @@ export default function CameraScreen() {
 
   const getBinDescription = (binType) => {
     switch (binType) {
-      case "blue":
-        return "Blue Bin is typically used for recycling. Items such as paper, cardboard, plastic bottles, glass bottles, and aluminum cans are commonly placed in blue bins for recycling purposes. It's important to check local guidelines to know exactly what can and cannot be recycled in your area.";
-      case "green":
-        return "Green Bin is often designated for organic waste or compostable materials. This includes food scraps, yard waste (like grass clippings and leaves), and other biodegradable materials. Composting these items helps divert organic waste from landfills and can be used to create nutrient-rich soil amendments.";
-      case "brown":
-        return "In some areas, the brown bin might be used for organic waste or garden waste similar to the green bin. However, in other places, it might be used for other specific types of waste, such as hazardous materials or electronics. Again, it's essential to check local regulations.";
-      case "black":
-        return "Black Bin is typically used for general or residual waste that cannot be recycled or composted. This includes items like non-recyclable plastics, certain types of packaging, and other household waste that cannot be placed in the recycling or compost bins.";
+      case 'blue':
+        return (
+          <>
+            <Text style={{ width: '100%', lineHeight: 25 }}>Blue Bin is designated for recyclable waste.{"\n"}Items that are commonly placed in blue bins are:{"\n"}</Text>
+            <View>
+              {[
+                'Paper',
+                'Cardboard',
+                'Glass bottles and jars',
+                'Milk and juice cartons'
+              ].map((item, index) => (
+                <View style={{ marginTop: 10 }}>
+                  <Text key={index}>
+                    {`\u2043 ${item}`}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          </>
+        );
+      case 'green':
+        return (
+          <>
+            <Text>Green Bin is designated for items that can be recycled. {"\n"}{"\n"}This includes:{"\n"}</Text>
+            <View>
+              {[
+                'Metal cans and foil',
+                'Plastic containers with recycling symbols #1 to #7',
+                'Plastic bottles with recycling symbols #1 to #7',
+              ].map((item, index) => (
+                <View style={{ marginTop: 10 }}>
+                  <Text key={index}>
+                    {`\u2043 ${item}`}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          </>
+        );
+      case 'orange':
+        return (
+          <>
+            <Text>Orange Bin is designated for organic waste or compostable materials. {"\n"}{"\n"}This includes:{"\n"}</Text>
+            <View>
+              {['Organics', 'Leaves', 'Small branches', 'Grass clippings'].map((item, index) => (
+                <View style={{ marginTop: 10 }}>
+                  <Text key={index}>
+                    {`\u2043 ${item}`}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          </>
+        );
+      case 'black':
+        return (
+          <>
+            <Text style={{ width: '100%' }}>Black Bin is designated for non recyclable waste.{"\n"}{"\n"}Items that are commonly placed in black bins are:{"\n"}</Text>
+            <View>
+              {[
+                'Food scraps',
+                'Diapers, sanitary products',
+                "Broken household items that can't be recycled",
+                'Polystyrene foam'
+              ].map((item, index) => (
+                <View style={{ marginTop: 10 }}>
+                  <Text key={index} style={{ textTransform: 'capitalize', width: '100%' }}>
+                    {`\u2043 ${item}`}
+                  </Text>
+                </View>
+              ))}
+            </View>
+          </>
+        );
       default:
-        return "Bin type not recognized.";
+        return <Text>Bin type not recognized.</Text>;
     }
   };
 
@@ -437,101 +609,23 @@ export default function CameraScreen() {
               )}
             </View>
           </Camera>
+          {isLoading && <Loading />}
+          {error && <Error error={error} />}
+          {prediction && <View style={styles.container}>
+            {/* <TouchableOpacity onPress={toggleBottomSheet}>
+              <Text>Open Bottom Sheet</Text>
+            </TouchableOpacity> */}
+            <BottomSheet isVisible={bottomSheetVisible} onClose={closeBottomSheet} prediction={prediction} />
+          </View>}
+          {/* {prediction && <Prediction prediction={prediction} />} */}
         </>
       ) : !permission.granted ? (
         <RenderRequestPermission />
       ) : (
-        <Loading />
+        <View className="flex-1 items-center justify-center">
+          <Text className="text-center">Loading...</Text>
+        </View>
       )}
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  modalOverlay: {
-    flex: 1,
-    justifyContent: "flex-end",
-  },
-  bottomSheet: {
-    backgroundColor: "#ffffff",
-    padding: 20,
-    paddingVertical: 20,
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-
-    elevation: 5,
-
-    maxHeight: "90%",
-  },
-  bottomSheetTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  bottomSheetDescription: {
-    fontSize: 15,
-    marginTop: 10,
-  },
-  bottomSheetRecommendation: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: PRIMARY,
-    marginTop: 10,
-    textTransform: "capitalize",
-  },
-  bottomSuggestedBinTitle: {
-    fontSize: 17,
-    fontWeight: "500",
-    marginTop: 10,
-  },
-  bottomSheetBinDescription: {
-    fontSize: 15,
-    marginTop: 10,
-  },
-  closeButton: {
-    marginTop: 20,
-    backgroundColor: PRIMARY,
-    alignSelf: "center",
-    width: "100%",
-    padding: 17,
-    borderRadius: 5,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 3,
-    },
-    shadowOpacity: 0.29,
-    shadowRadius: 4.65,
-
-    elevation: 7,
-  },
-  closeButtonText: {
-    color: "white",
-    fontSize: 15,
-    alignSelf: "center",
-  },
-  bottomSheetBinTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginTop: 10,
-    textTransform: "capitalize",
-  },
-  blueBin: {
-    color: "#0077c8",
-  },
-  greenBin: {
-    color: "#228B22",
-  },
-  brownBin: {
-    color: "brown",
-  },
-  blackBin: {
-    color: "black",
-  },
-});
