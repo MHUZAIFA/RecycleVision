@@ -1,11 +1,17 @@
+// @ts-nocheck
+import { LineData } from "@/assets/data/info";
+import { PRIMARY } from "@/lib/constants";
 import {
   deleteDatabase,
   getLevel,
   getNbrOfScans,
+  getPieData,
   getScansPerDate,
   getStreak,
-  getPieData
 } from "@/lib/gamification/dbUtils";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as ImagePicker from "expo-image-picker";
+import { usePathname } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import {
   Alert,
@@ -18,6 +24,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { PageIndicator } from "react-native-page-indicator";
 import PagerView from "react-native-pager-view";
 import { Bar } from "react-native-progress";
 import LineGraph from "../(components)/LineGraph";
@@ -34,11 +41,6 @@ import starbucks_locked from "../../assets/coupons/STARBUCKS_LOCKED.png";
 import walmart from "../../assets/coupons/WALMART.png";
 import walmart_locked from "../../assets/coupons/WALMART_LOCKED.png";
 import user from "../../assets/user.png";
-import { PageIndicator } from "react-native-page-indicator";
-import * as ImagePicker from "expo-image-picker";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useFocusEffect, useNavigation, usePathname } from "expo-router";
-import { LineData } from "@/assets/data/info";
 
 export default function Tab() {
   const [title, setTitle] = useState("Eco Warrior");
@@ -165,7 +167,7 @@ export default function Tab() {
 
     getPic();
 
-    getPieData().then(data => {
+    getPieData().then((data) => {
       setPieData(data);
     });
   }, [navigation]);
@@ -198,7 +200,7 @@ export default function Tab() {
             <Bar
               progress={nbrOfScans / nextLevelScans}
               width={Dimensions.get("screen").width * 0.9}
-              color="#6342E8"
+              color={PRIMARY}
             />
             <View className="flex flex-row w-[90%] justify-between mb-2">
               <Text className="text-progress"></Text>
@@ -238,7 +240,7 @@ export default function Tab() {
             <LineGraph nbrOfScans={nbrOfScans} lineData={lineData} />
           </View>
           <View className="flex-col w-screen space-y-1.25">
-            <PieGraph nbrOfScans={nbrOfScans} pieData={pieData}/>
+            <PieGraph nbrOfScans={nbrOfScans} pieData={pieData} />
           </View>
           <View className="flex-col w-screen space-y-1.25">
             <SupportBanner />

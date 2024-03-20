@@ -1,3 +1,4 @@
+import { PRIMARY } from "@/lib/constants";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import { useEffect, useRef } from "react";
@@ -7,17 +8,11 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={({ route }) => ({
-        tabBarActiveTintColor: "#6342E8",
+        tabBarActiveTintColor: PRIMARY,
         tabBarInactiveTintColor: "#808080",
         headerShown: false,
         tabBarStyle: {
           backgroundColor: "#fff",
-          /**
-           * to HIDE TAB BAR based on route e.g. index
-           height: route.name === "index" ? 0 : 60,
-           paddingTop: route.name === "index" ? 0 : 10,
-           paddingBottom: route.name === "index" ? 0 : 10,
-           */
           height: 60,
           paddingBottom: 20,
           marginBottom: 5,
