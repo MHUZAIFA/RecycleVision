@@ -4,10 +4,10 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 const PieGraph = (props) => {
 const colorMapping = {
-  'cardboard/paper': '#0000FF',
-  'M/G/P': '#008000',
-  'organic': '#A52A2A',
-  'trash': '#000000'
+  'Paper | Cardboard': '#0000FF',
+  'Other Recyclables': '#008000',
+  'Food Organics': '#A52A2A',
+  'General Waste': '#000000'
 };
 
 const chartData = Object.keys(props.pieData).map(key => {
@@ -15,7 +15,16 @@ const chartData = Object.keys(props.pieData).map(key => {
 
   // Rename the keys
   if (key === 'metal/glass/plastic') {
-    newKey = 'M/G/P';
+    newKey = 'Other Recyclables';
+  }
+  if (key === 'cardboard/paper') {
+    newKey = 'Paper | Cardboard';
+  }
+  if (key === 'organic') {
+    newKey = 'Food Organics';
+  }
+  if (key === 'trash') {
+    newKey = 'General Waste';
   }
 
   return {
@@ -32,13 +41,9 @@ const chartData = Object.keys(props.pieData).map(key => {
   }
 
   return (
-    <View className="w-[355px] h-[335px] flex flex-col rounded-xl border-2 border-gray-400">
-      <View className="flex flex-row justify-between w-[100%] h-[33%] p-8">
-        <View className="flex-col justify-center">
-          <Text className="text-3xl font-semibold">{props.nbrOfScans}</Text>
-          <Text className="text-sm text-gray-500">Types of Items Scanned</Text>
-        </View>
-        <FontAwesome name="info-circle" size={26} color="black" />
+    <View className="w-[355px] h-[260px] flex flex-col rounded-xl border-2 border-gray-400">
+      <View className="flex flex-row justify-center mt-5">
+        <Text className="text-sm text-gray-500" style={{ fontSize: 20 }}>Types of Items Scanned</Text>
       </View>
       <PieChart
         data={chartData}
