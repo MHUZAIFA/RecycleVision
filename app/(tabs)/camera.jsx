@@ -255,7 +255,7 @@ export default function CameraScreen() {
         </TouchableOpacity>
         <Text className="font-bold text-lg">{error ? error : "Submit ?"}</Text>
         <TouchableOpacity
-          disabled={error}
+          disabled={error ? true : false}
           onPress={processImage}
           style={{
             backgroundColor: !error ? PRIMARY : "#676767",
@@ -418,7 +418,9 @@ export default function CameraScreen() {
   return (
     <View className="flex-1">
       {isFocused ? (
-        <>
+        isLoading ? (
+          <Loading />
+        ) : (
           <Camera
             className="flex-1"
             ratio={screenRatio}
@@ -441,14 +443,11 @@ export default function CameraScreen() {
               )}
             </View>
           </Camera>
-          {isLoading && <Loading />}
-        </>
+        )
       ) : !permission.granted ? (
         <RenderRequestPermission />
       ) : (
-        <View className="flex-1 items-center justify-center">
-          <Text className="text-center">Loading...</Text>
-        </View>
+        <Loading />
       )}
     </View>
   );
