@@ -18,7 +18,7 @@ const chartData = Object.keys(props.pieData).map(key => {
     newKey = 'Other Recyclables';
   }
   if (key === 'cardboard/paper') {
-    newKey = 'Paper | Cardboard';
+    newKey = 'Paper & Cardboard';
   }
   if (key === 'organic') {
     newKey = 'Food Organics';
@@ -42,13 +42,13 @@ const chartData = Object.keys(props.pieData).map(key => {
 
   return (
     <View className="w-[355px] h-[260px] flex flex-col rounded-xl border-2 border-gray-400">
-      <View className="flex flex-row justify-center mt-5">
+      <View className="flex flex-row justify-center mt-5 mb-5">
         <Text className="text-sm text-gray-500" style={{ fontSize: 20 }}>Types of Items Scanned</Text>
       </View>
       <PieChart
         data={chartData}
         width={350}
-        height={220}
+        height={180}
         chartConfig={{
           color: (opacity = 1) => `rgba(128, 0, 128, ${opacity})`,
           labelColor: (opacity = 1) => `rgba(55, 55, 55, ${opacity})`,
@@ -58,7 +58,7 @@ const chartData = Object.keys(props.pieData).map(key => {
         }}
         accessor={"population"}
         backgroundColor={"transparent"}
-        paddingLeft={"15"}
+        paddingLeft={"0"}
         center={[0, 0]}
         absolute
       />
