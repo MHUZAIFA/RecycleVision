@@ -382,8 +382,11 @@ export default function CameraScreen() {
       color: "#171717",
     },
     tinyImg: {
-      width: 30,
-      height: 30
+      display: 'flex',
+      alignSelf: 'flex-end',
+      width: '100%',
+      height: '100%',
+      objectFit: 'contain'
     }
   });
 
@@ -416,23 +419,27 @@ export default function CameraScreen() {
 
     return (
       <>
-        <Text
-          style={{
-            fontSize: 14,
-            color: "#808080",
-            marginTop: 10,
-            fontWeight: "400",
-          }}>
-          Place in:
-        </Text>
-        <View style={{display: 'flex', flexDirection: 'row'}}>
-        <Text style={[styles.bottomSheetBinTitle, colorStyle]}>
-          {binType} Bin
-        </Text>
-        <Image
-          style={styles.tinyImg}
-          source={binsIconPaths[binType]}
-        />
+        <View style={{ display: 'flex', flexDirection: 'row' }}>
+          <View style={{ display: 'flex', flexDirection: 'column' }}>
+            <Text
+              style={{
+                fontSize: 14,
+                color: "#808080",
+                marginTop: 10,
+                fontWeight: "400",
+              }}>
+              Place in:
+            </Text>
+            <Text style={[styles.bottomSheetBinTitle, colorStyle]}>
+              {binType} bin
+            </Text>
+          </View>
+          <View style={{width: 50, height: 50, paddingTop: 10, justifyContent: 'center', alignItems: 'center'}}>
+          <Image
+            style={styles.tinyImg}
+            source={binsIconPaths[binType]}
+          />
+          </View>
         </View>
         <View
           style={{
