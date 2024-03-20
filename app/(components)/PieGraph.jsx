@@ -4,7 +4,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 const PieGraph = (props) => {
 const colorMapping = {
-  'Paper | Cardboard': '#0000FF',
+  'Paper & Cardboard': '#0000FF',
   'Other Recyclables': '#008000',
   'Food Organics': '#A52A2A',
   'General Waste': '#000000'
