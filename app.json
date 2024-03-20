@@ -31,15 +31,11 @@
       "bundler": "metro"
     },
     "plugins": [
-      "expo-router",
-      "expo-font"
+      "expo-router"
     ],
     "extra": {
       "router": {
         "origin": false
-      },
-      "eas": {
-        "projectId": "e51b8cc6-b758-41a5-897c-2e92033b2c57"
       }
     }
   }

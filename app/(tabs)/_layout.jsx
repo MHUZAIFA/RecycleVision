@@ -1,3 +1,4 @@
+import { PRIMARY } from "@/lib/constants";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
 import { useEffect, useRef } from "react";
@@ -7,17 +8,11 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={({ route }) => ({
-        tabBarActiveTintColor: "#6342E8",
+        tabBarActiveTintColor: PRIMARY,
         tabBarInactiveTintColor: "#808080",
         headerShown: false,
         tabBarStyle: {
           backgroundColor: "#fff",
-          /**
-           * to HIDE TAB BAR based on route e.g. index
-           height: route.name === "index" ? 0 : 60,
-           paddingTop: route.name === "index" ? 0 : 10,
-           paddingBottom: route.name === "index" ? 0 : 10,
-           */
           height: 60,
           paddingTop: 10,
           paddingBottom: 10,
@@ -34,9 +29,9 @@ export default function TabLayout() {
             }).start();
           }, [focused]);
 
-          if (route.name === "camera") {
+          if (route.name === "index") {
             iconName = focused ? "camera" : "camera-outline";
-          } else if (route.name === "index") {
+          } else if (route.name === "home") {
             iconName = focused ? "home" : "home-outline";
           }
 
@@ -55,13 +50,13 @@ export default function TabLayout() {
         },
       })}>
       <Tabs.Screen
-        name="camera"
+        name="index"
         options={{
           title: "Scan",
         }}
       />
       <Tabs.Screen
-        name="index"
+        name="home"
         options={{
           title: "Home",
         }}
