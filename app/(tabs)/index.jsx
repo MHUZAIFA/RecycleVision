@@ -205,7 +205,7 @@ export default function Tab() {
           <View className="flex flex-col w-[90%] align-center">
             <Text className="font-semibold text-base">Coupons</Text>
           </View>
-          <View className="flex w-[90%] h-[120px] shadow-3xl">
+          <View className="flex w-[90%] h-[100px] shadow-3xl">
             <PagerView
               className="flex-1"
               initialPage={0}
