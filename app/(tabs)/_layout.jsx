@@ -29,9 +29,9 @@ export default function TabLayout() {
             }).start();
           }, [focused]);
 
-          if (route.name === "camera") {
+          if (route.name === "index") {
             iconName = focused ? "camera" : "camera-outline";
-          } else if (route.name === "index") {
+          } else if (route.name === "home") {
             iconName = focused ? "home" : "home-outline";
           }
 
@@ -50,13 +50,13 @@ export default function TabLayout() {
         },
       })}>
       <Tabs.Screen
-        name="camera"
+        name="index"
         options={{
           title: "Scan",
         }}
       />
       <Tabs.Screen
-        name="index"
+        name="home"
         options={{
           title: "Home",
         }}
