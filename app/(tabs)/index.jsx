@@ -543,7 +543,7 @@ export default function CameraScreen() {
         return (
           <>
             <Text style={{ width: "100%", lineHeight: 25 }}>
-              Blue Bin is designated for recyclable waste.{"\n"}Items that are
+              Blue bin is designated for recyclable waste.{"\n"}Items that are
               commonly placed in blue bins are:{"\n"}
             </Text>
             <View>
@@ -564,7 +564,7 @@ export default function CameraScreen() {
         return (
           <>
             <Text>
-              Green Bin is designated for items that can be recycled. {"\n"}
+              Green bin is designated for items that can be recycled. {"\n"}
               {"\n"}This includes:{"\n"}
             </Text>
             <View>
@@ -584,7 +584,7 @@ export default function CameraScreen() {
         return (
           <>
             <Text>
-              Orange Bin is designated for organic waste or compostable
+              Orange bin is designated for organic waste or compostable
               materials. {"\n"}
               {"\n"}This includes:{"\n"}
             </Text>
@@ -603,7 +603,7 @@ export default function CameraScreen() {
         return (
           <>
             <Text style={{ width: "100%" }}>
-              Black Bin is designated for non recyclable waste.{"\n"}
+              Black bin is designated for non recyclable waste.{"\n"}
               {"\n"}Items that are commonly placed in black bins are:{"\n"}
             </Text>
             <View>
