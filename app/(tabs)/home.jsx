@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { LineData } from "@/assets/data/info";
 import { PRIMARY } from "@/lib/constants";
 import {

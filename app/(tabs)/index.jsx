@@ -9,19 +9,19 @@ import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Animated,
+  Image,
   Modal,
   Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
-  Image
+  View
 } from "react-native";
 import BarcodeMask from "react-native-barcode-mask";
-import greenBinImagePath from "../../assets/bins/green.png";
-import blueBinImagePath from "../../assets/bins/blue.png";
-import orangeBinImagePath from "../../assets/bins/orange.png";
 import blackBinImagePath from "../../assets/bins/black.png";
+import blueBinImagePath from "../../assets/bins/blue.png";
+import greenBinImagePath from "../../assets/bins/green.png";
+import orangeBinImagePath from "../../assets/bins/orange.png";
 
 import * as Device from 'expo-device';
 
@@ -159,7 +159,7 @@ export default function CameraScreen() {
         insertNewScan(label);
       } else {
         setPrediction(null);
-        setError("No Results. Try again.");
+        setError("No Results\nTry again");
       }
       setBottomSheetVisible(true);
     } catch (e) {
