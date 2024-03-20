@@ -110,7 +110,7 @@ export default function CameraScreen() {
           setimage(pic);
         }
       } catch (e) {
-        setError("Capturing Error. Try again.");
+        setError("Capturing Error\nTry again");
         console.log("Failed Camera", e);
       }
     }
@@ -124,7 +124,7 @@ export default function CameraScreen() {
       const imageBuffer = await new Response(blob).arrayBuffer();
       sendImageToModel(imageBuffer);
     } catch (e) {
-      setError("Processing Error. Try again.");
+      setError("Processing Error\nTry again");
       console.log("Failed Processing", e);
     }
     setIsLoading(false);
@@ -156,7 +156,7 @@ export default function CameraScreen() {
       }
       setBottomSheetVisible(true);
     } catch (e) {
-      setError("API Error. Try again.");
+      setError("API Error\nTry again");
       console.log("Failed API", e);
     }
   };
