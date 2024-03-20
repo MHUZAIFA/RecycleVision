@@ -1,7 +1,7 @@
+import { PRIMARY } from "@/lib/constants";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Text, View } from "react-native";
 import { LineChart } from "react-native-chart-kit";
-import { LineData } from "../../assets/data/info";
 
 const LineGraph = (props) => {
   return (
@@ -27,7 +27,7 @@ const LineGraph = (props) => {
           propsForDots: {
             r: "6",
             strokeWidth: "2",
-            stroke: "#6342E8",
+            stroke: PRIMARY,
           },
           useShadowColorFromDataset: false,
         }}
