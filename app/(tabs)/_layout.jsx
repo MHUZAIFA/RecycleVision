@@ -14,8 +14,8 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: "#fff",
           height: 60,
-          paddingBottom: 20,
-          marginBottom: 5,
+          paddingTop: 10,
+          paddingBottom: 10,
         },
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
