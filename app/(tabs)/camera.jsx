@@ -253,7 +253,7 @@ export default function CameraScreen() {
           className="rounded-xl">
           <RotateCcw color={"black"} size={24} />
         </TouchableOpacity>
-        <Text className="font-bold text-lg">{error ? error : "Submit ?"}</Text>
+        <Text className="font-bold text-md">{error ? error : "Submit ?"}</Text>
         <TouchableOpacity
           disabled={error ? true : false}
           onPress={processImage}
@@ -280,7 +280,7 @@ export default function CameraScreen() {
 
   const Loading = () => {
     return (
-      <View className="absolute w-full h-full flex-1 flex items-center justify-center bg-white opacity-50 px-4">
+      <View className="absolute w-full h-full flex-1 flexitems-center justify-center bg-white opacity-50 px-4">
         <ActivityIndicator size="large" color={PRIMARY} />
       </View>
     );
@@ -418,33 +418,28 @@ export default function CameraScreen() {
   return (
     <View className="flex-1">
       {isFocused ? (
-        isLoading ? (
-          <Loading />
-        ) : isCameraReady ? (
-          <>
-            <Camera
-              className="flex-1"
-              ratio={screenRatio}
-              type={CameraType.back}
-              autoFocus={AutoFocus.on}
-              onCameraReady={() => setIsCameraReady(true)}
-              onMountError={(error) => <Error error={error} />}
-              ref={cameraRef}>
-              <View className="flex-1 flex-row bg-transparent justify-between items-end">
-                {isPreview ? <ConfirmationPhase /> : <CaptureControl />}
-                {prediction && (
-                  <BottomSheet
-                    isVisible={bottomSheetVisible}
-                    onClose={closeBottomSheet}
-                    prediction={prediction}
-                  />
-                )}
-              </View>
-            </Camera>
-          </>
-        ) : (
-          <Loading />
-        )
+        <>
+          <Camera
+            className="flex-1"
+            ratio={screenRatio}
+            type={CameraType.back}
+            autoFocus={AutoFocus.on}
+            onCameraReady={() => setIsCameraReady(true)}
+            onMountError={(error) => <Error error={error} />}
+            ref={cameraRef}>
+            <View className="flex-1 flex-row bg-transparent justify-between items-end">
+              {!isPreview ? <CaptureControl /> : <ConfirmationPhase />}
+              {isLoading && <Loading />}
+              {prediction && (
+                <BottomSheet
+                  isVisible={bottomSheetVisible}
+                  onClose={closeBottomSheet}
+                  prediction={prediction}
+                />
+              )}
+            </View>
+          </Camera>
+        </>
       ) : !permission.granted ? (
         <RenderRequestPermission />
       ) : (
