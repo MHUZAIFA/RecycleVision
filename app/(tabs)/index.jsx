@@ -9,19 +9,19 @@ import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Animated,
+  Image,
   Modal,
   Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
-  Image
+  View
 } from "react-native";
 import BarcodeMask from "react-native-barcode-mask";
-import greenBinImagePath from "../../assets/bins/green.png";
-import blueBinImagePath from "../../assets/bins/blue.png";
-import orangeBinImagePath from "../../assets/bins/orange.png";
 import blackBinImagePath from "../../assets/bins/black.png";
+import blueBinImagePath from "../../assets/bins/blue.png";
+import greenBinImagePath from "../../assets/bins/green.png";
+import orangeBinImagePath from "../../assets/bins/orange.png";
 
 import * as Device from 'expo-device';
 
@@ -159,7 +159,7 @@ export default function CameraScreen() {
         insertNewScan(label);
       } else {
         setPrediction(null);
-        setError("No Results. Try again.");
+        setError("No Results\nTry again");
       }
       setBottomSheetVisible(true);
     } catch (e) {
@@ -543,7 +543,7 @@ export default function CameraScreen() {
         return (
           <>
             <Text style={{ width: "100%", lineHeight: 25 }}>
-              Blue Bin is designated for recyclable waste.{"\n"}Items that are
+              Blue bin is designated for recyclable waste.{"\n"}Items that are
               commonly placed in blue bins are:{"\n"}
             </Text>
             <View>
@@ -564,7 +564,7 @@ export default function CameraScreen() {
         return (
           <>
             <Text>
-              Green Bin is designated for items that can be recycled. {"\n"}
+              Green bin is designated for items that can be recycled. {"\n"}
               {"\n"}This includes:{"\n"}
             </Text>
             <View>
@@ -584,7 +584,7 @@ export default function CameraScreen() {
         return (
           <>
             <Text>
-              Orange Bin is designated for organic waste or compostable
+              Orange bin is designated for organic waste or compostable
               materials. {"\n"}
               {"\n"}This includes:{"\n"}
             </Text>
@@ -603,7 +603,7 @@ export default function CameraScreen() {
         return (
           <>
             <Text style={{ width: "100%" }}>
-              Black Bin is designated for non recyclable waste.{"\n"}
+              Black bin is designated for non recyclable waste.{"\n"}
               {"\n"}Items that are commonly placed in black bins are:{"\n"}
             </Text>
             <View>
