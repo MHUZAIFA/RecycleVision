@@ -110,7 +110,7 @@ export default function CameraScreen() {
           setimage(pic);
         }
       } catch (e) {
-        setError("Capturing Error. Try again.");
+        setError("Capturing Error\nTry again");
         console.log("Failed Camera", e);
       }
     }
@@ -124,7 +124,7 @@ export default function CameraScreen() {
       const imageBuffer = await new Response(blob).arrayBuffer();
       sendImageToModel(imageBuffer);
     } catch (e) {
-      setError("Processing Error. Try again.");
+      setError("Processing Error\nTry again");
       console.log("Failed Processing", e);
     }
     setIsLoading(false);
@@ -156,7 +156,7 @@ export default function CameraScreen() {
       }
       setBottomSheetVisible(true);
     } catch (e) {
-      setError("API Error. Try again.");
+      setError("API Error\nTry again");
       console.log("Failed API", e);
     }
   };
@@ -292,12 +292,6 @@ export default function CameraScreen() {
   };
 
   const styles = StyleSheet.create({
-    container: {
-      // flex: 1,
-      // justifyContent: 'center',
-      // alignItems: 'center',
-      // backgroundColor: 'red',
-    },
     modalOverlay: {
       flex: 1,
       justifyContent: "flex-end",
@@ -314,9 +308,7 @@ export default function CameraScreen() {
       },
       shadowOpacity: 0.25,
       shadowRadius: 3.84,
-
       elevation: 5,
-
       maxHeight: "90%",
     },
     bottomSheetTitle: {
@@ -345,7 +337,7 @@ export default function CameraScreen() {
     },
     closeButton: {
       marginTop: 20,
-      backgroundColor: "#000",
+      backgroundColor: PRIMARY,
       alignSelf: "center",
       width: "100%",
       padding: 17,
@@ -460,7 +452,7 @@ export default function CameraScreen() {
               {getBinDescription(binType)}
             </Text>
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-              <Text style={styles.closeButtonText}>Dismiss</Text>
+              <Text style={styles.closeButtonText}>Done</Text>
             </TouchableOpacity>
           </View>
         </TouchableOpacity>
@@ -629,28 +621,11 @@ export default function CameraScreen() {
               )}
             </View>
           </Camera>
-          {isLoading && <Loading />}
-          {error && <Error error={error} />}
-          {prediction && (
-            <View style={styles.container}>
-              {/* <TouchableOpacity onPress={toggleBottomSheet}>
-              <Text>Open Bottom Sheet</Text>
-            </TouchableOpacity> */}
-              <BottomSheet
-                isVisible={bottomSheetVisible}
-                onClose={closeBottomSheet}
-                prediction={prediction}
-              />
-            </View>
-          )}
-          {/* {prediction && <Prediction prediction={prediction} />} */}
         </>
       ) : !permission.granted ? (
         <RenderRequestPermission />
       ) : (
-        <View className="flex-1 items-center justify-center">
-          <Text className="text-center">Loading...</Text>
-        </View>
+        <Loading />
       )}
     </View>
   );
