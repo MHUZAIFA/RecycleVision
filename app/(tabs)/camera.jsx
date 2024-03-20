@@ -368,7 +368,6 @@ export default function CameraScreen() {
     bottomSheetBinTitle: {
       fontSize: 20,
       fontWeight: "bold",
-      textTransform: "capitalize",
       marginRight: 10
     },
     blueBin: {
@@ -433,7 +432,7 @@ export default function CameraScreen() {
               Place in:
             </Text>
             <Text style={[styles.bottomSheetBinTitle, colorStyle]}>
-              {binType} bin
+              <Text style={{textTransform: "capitalize"}}>{binType}</Text> bin
             </Text>
           </View>
           <View style={{width: 50, height: 50, paddingTop: 10, justifyContent: 'center', alignItems: 'center'}}>
