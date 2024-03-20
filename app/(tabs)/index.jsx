@@ -1,13 +1,13 @@
 import { PRIMARY } from "@/lib/constants";
 import { insertNewScan } from "@/lib/gamification/dbUtils";
 import { useIsFocused } from "@react-navigation/core";
-import clsx from "clsx";
 import { AutoFocus, Camera, CameraType, ImageType } from "expo-camera";
 import { useNavigation } from "expo-router";
 import { Check, RotateCcw, X } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Animated,
   Image,
   Modal,
@@ -171,18 +171,21 @@ export default function CameraScreen() {
   /**
    * RENDER COMPONENTS
    */
-  const RenderRequestPermission = () => (
-    <View className="flex-1 items-center justify-center">
-      <Text className="text-center">
-        We need your permission to show the camera
-      </Text>
-      <Pressable
-        className="bg-blue-500 py-2 px-4 rounded"
-        onPress={requestPermission}>
-        <Text className="text-white font-bold">Grant Permission</Text>
-      </Pressable>
-    </View>
-  );
+  const RequestPermissionAlert = () => {
+    Alert.alert(
+      "Permission Request",
+      "We need your permission to show the camera",
+      [
+        {
+          text: "Cancel",
+          style: "cancel"
+        },
+        { text: "Grant Permission", onPress: requestPermission }
+      ],
+      { cancelable: false }
+    );
+    return null;
+  };
 
   const buttonSize = new Animated.Value(1);
   const buttonColorInterpolation = buttonColor.interpolate({
@@ -249,17 +252,15 @@ export default function CameraScreen() {
   const ConfirmationPhase = () => {
     return (
       <View
-        className={clsx(
-          "bottom-10 justify-between items-center flex-1 flex-row mx-16 p-2 rounded-xl shadow-xl",
-          !error ? "bg-white" : "bg-red-400"
-        )}>
+        className={`bottom-10 justify-between items-center flex-1 flex-row mx-16 p-2 rounded-xl shadow-xl 
+                    ${!error ? "bg-white" : "bg-red-400"}`}>
         <TouchableOpacity
           onPress={resetCameraScreen}
           style={{ backgroundColor: "#E9E9E9", padding: 10 }}
           className="rounded-xl">
           <RotateCcw color={"black"} size={24} />
         </TouchableOpacity>
-        <Text className="font-bold text-md">{error ? error : "Submit ?"}</Text>
+        <Text className="font-bold text-md text-center">{error ? error : "Submit ?"}</Text>
         <TouchableOpacity
           disabled={error ? true : false}
           onPress={processImage}
@@ -270,7 +271,7 @@ export default function CameraScreen() {
           className="rounded-xl">
           <Check color={"white"} size={24} />
         </TouchableOpacity>
-      </View>
+      </View >
     );
   };
 
@@ -432,14 +433,14 @@ export default function CameraScreen() {
               Place in:
             </Text>
             <Text style={[styles.bottomSheetBinTitle, colorStyle]}>
-              <Text style={{textTransform: "capitalize"}}>{binType}</Text> bin
+              <Text style={{ textTransform: "capitalize" }}>{binType}</Text> bin
             </Text>
           </View>
-          <View style={{width: 50, height: 50, paddingTop: 10, justifyContent: 'center', alignItems: 'center'}}>
-          <Image
-            style={styles.tinyImg}
-            source={binsIconPaths[binType]}
-          />
+          <View style={{ width: 50, height: 50, paddingTop: 10, justifyContent: 'center', alignItems: 'center' }}>
+            <Image
+              style={styles.tinyImg}
+              source={binsIconPaths[binType]}
+            />
           </View>
         </View>
         <View
@@ -631,8 +632,10 @@ export default function CameraScreen() {
 
   return (
     <View className="flex-1">
-      {isFocused ? (
-        <>
+      {!permission ? (<Loading />) :
+        !permission.granted ? (
+          <RequestPermissionAlert />
+        ) : isFocused ? (
           <Camera
             useCamera2Api={Device.brand === 'Apple'}
             className="flex-1"
@@ -654,12 +657,9 @@ export default function CameraScreen() {
               )}
             </View>
           </Camera>
-        </>
-      ) : !permission.granted ? (
-        <RenderRequestPermission />
-      ) : (
-        <Loading />
-      )}
+        ) : (
+          <Loading />
+        )}
     </View>
   );
 }
