@@ -15,8 +15,13 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Image
 } from "react-native";
 import BarcodeMask from "react-native-barcode-mask";
+import greenBinImagePath from "../../assets/bins/green.png";
+import blueBinImagePath from "../../assets/bins/blue.png";
+import orangeBinImagePath from "../../assets/bins/orange.png";
+import blackBinImagePath from "../../assets/bins/black.png";
 
 export default function CameraScreen() {
   const cameraRef = useRef(null);
@@ -362,6 +367,7 @@ export default function CameraScreen() {
       fontSize: 20,
       fontWeight: "bold",
       textTransform: "capitalize",
+      marginRight: 10
     },
     blueBin: {
       color: "#0077c8",
@@ -375,6 +381,10 @@ export default function CameraScreen() {
     blackBin: {
       color: "#171717",
     },
+    tinyImg: {
+      width: 30,
+      height: 30
+    }
   });
 
   // Function to render bin title with appropriate color style
@@ -397,6 +407,13 @@ export default function CameraScreen() {
         colorStyle = {}; // Default style if bin type not found
     }
 
+    const binsIconPaths = {
+      green: greenBinImagePath,
+      blue: blueBinImagePath,
+      orange: orangeBinImagePath,
+      black: blackBinImagePath
+    };
+
     return (
       <>
         <Text
@@ -408,9 +425,15 @@ export default function CameraScreen() {
           }}>
           Place in:
         </Text>
+        <View style={{display: 'flex', flexDirection: 'row'}}>
         <Text style={[styles.bottomSheetBinTitle, colorStyle]}>
           {binType} Bin
         </Text>
+        <Image
+          style={styles.tinyImg}
+          source={binsIconPaths[binType]}
+        />
+        </View>
         <View
           style={{
             borderBottomColor: "#D9D9D9",
