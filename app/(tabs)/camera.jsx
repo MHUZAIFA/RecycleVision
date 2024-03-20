@@ -337,7 +337,7 @@ export default function CameraScreen() {
     },
     closeButton: {
       marginTop: 20,
-      backgroundColor: "#000",
+      backgroundColor: PRIMARY,
       alignSelf: "center",
       width: "100%",
       padding: 17,
@@ -452,7 +452,7 @@ export default function CameraScreen() {
               {getBinDescription(binType)}
             </Text>
             <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-              <Text style={styles.closeButtonText}>Dismiss</Text>
+              <Text style={styles.closeButtonText}>Done</Text>
             </TouchableOpacity>
           </View>
         </TouchableOpacity>
