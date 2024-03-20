@@ -23,6 +23,8 @@ import blueBinImagePath from "../../assets/bins/blue.png";
 import orangeBinImagePath from "../../assets/bins/orange.png";
 import blackBinImagePath from "../../assets/bins/black.png";
 
+import * as Device from 'expo-device';
+
 export default function CameraScreen() {
   const cameraRef = useRef(null);
   const [permission, requestPermission] = Camera.useCameraPermissions();
@@ -633,10 +635,11 @@ export default function CameraScreen() {
       {isFocused ? (
         <>
           <Camera
+            useCamera2Api={Device.brand === 'Apple'}
             className="flex-1"
             ratio={screenRatio}
             type={CameraType.back}
-            autoFocus={AutoFocus.on}
+            autoFocus={Device.brand === 'Apple' ? true : AutoFocus.on}
             onCameraReady={() => setIsCameraReady(true)}
             onMountError={(error) => <Error error={error} />}
             ref={cameraRef}>
