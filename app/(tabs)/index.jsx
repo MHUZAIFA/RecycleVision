@@ -1,16 +1,15 @@
 import {
   deleteDatabase,
   getLevel,
-  getNbrOfScans, getScansPerDate,
+  getNbrOfScans,
+  getScansPerDate,
   getStreak,
 } from "@/lib/gamification/dbUtils";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useCallback, useEffect, useState } from "react";
 import {
   Alert,
   Dimensions,
   Image,
-  ImageBackground,
   Pressable,
   SafeAreaView,
   ScrollView,
@@ -33,8 +32,7 @@ import starbucks from "../../assets/coupons/STARBUCKS.png";
 import starbucks_locked from "../../assets/coupons/STARBUCKS_LOCKED.png";
 import walmart from "../../assets/coupons/WALMART.png";
 import walmart_locked from "../../assets/coupons/WALMART_LOCKED.png";
-import icon from "../../assets/favicon.png";
-
+import user from "../../assets/user.png";
 import { PageIndicator } from "react-native-page-indicator";
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -55,8 +53,20 @@ export default function Tab() {
 
   // using Fibonacci sequence to determine the #scans needed to reach the next level
   const couponsByStreak = {
-    0: [kfc_locked, best_buy_locked, walmart_locked, starbucks_locked, pizza_hut_locked],
-    1: [kfc,best_buy_locked, walmart_locked, starbucks_locked, pizza_hut_locked],
+    0: [
+      kfc_locked,
+      best_buy_locked,
+      walmart_locked,
+      starbucks_locked,
+      pizza_hut_locked,
+    ],
+    1: [
+      kfc,
+      best_buy_locked,
+      walmart_locked,
+      starbucks_locked,
+      pizza_hut_locked,
+    ],
     2: [kfc, best_buy, walmart_locked, starbucks_locked, pizza_hut_locked],
     3: [kfc, best_buy, walmart, starbucks_locked, pizza_hut_locked],
     5: [kfc, best_buy, walmart, starbucks, pizza_hut_locked],
@@ -124,7 +134,7 @@ export default function Tab() {
     }
   };
 
-  const refreshData = useCallback( () => {
+  const refreshData = useCallback(() => {
     getNbrOfScans().then((nbrOfScans) => {
       setNbrOfScans(nbrOfScans);
     });
@@ -147,7 +157,7 @@ export default function Tab() {
     };
 
     getScansPerDate().then((data) => {
-      console.log('data', data);
+      console.log("data", data);
       setLineData(data);
     });
 
@@ -172,7 +182,7 @@ export default function Tab() {
               className="w-[50px] h-[50px] flex justify-center items-center"
               onPress={handleImage}>
               <Image
-                source={profielPic ? { uri: profielPic } : icon}
+                source={profielPic ? { uri: profielPic } : user}
                 className="w-[100%] h-[100%] rounded-full"
               />
             </TouchableOpacity>
@@ -192,12 +202,8 @@ export default function Tab() {
               </Text>
             </View>
           </View>
-          <View className="flex flex-row w-[90%] align-center justify-between">
+          <View className="flex flex-col w-[90%] align-center">
             <Text className="font-semibold text-base">Coupons</Text>
-            <View className="flex flex-row gap-3">
-              <FontAwesome name="angle-left" size={24} color="black" />
-              <FontAwesome name="angle-right" size={24} color="black" />
-            </View>
           </View>
           <View className="flex w-[90%] h-[120px] shadow-3xl">
             <PagerView
@@ -223,7 +229,7 @@ export default function Tab() {
             />
           </View>
           <View className="flex-col w-screen space-y-1.25">
-            <LineGraph nbrOfScans={nbrOfScans} lineData={lineData}/>
+            <LineGraph nbrOfScans={nbrOfScans} lineData={lineData} />
           </View>
           <View className="flex-col w-screen space-y-1.25">
             <PieGraph />
@@ -231,11 +237,13 @@ export default function Tab() {
           <View className="flex-col w-screen space-y-1.25">
             <SupportBanner />
           </View>
-          <View className="flex-col w-[50vw]">
+          <View className="flex-col w-[90%]">
             <Pressable
-              className="bg-red-500 h-12 rounded-lg justify-center items-center"
+              className="h-12 rounded-lg justify-center items-center"
               onPress={onPressDelete}>
-              <Text className="text-white font-bold text-2xl">DELETE DB</Text>
+              <Text className="text-transparent font-bold text-2xl">
+                DELETE DB
+              </Text>
             </Pressable>
           </View>
         </View>
