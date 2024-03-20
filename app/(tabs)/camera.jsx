@@ -14,6 +14,7 @@ import {
   StyleSheet
 } from "react-native";
 import BarcodeMask from "react-native-barcode-mask";
+import { insertNewScan } from "@/lib/gamification/dbUtils";
 
 export default function CameraScreen() {
   const cameraRef = useRef(null);
@@ -135,6 +136,7 @@ export default function CameraScreen() {
       if (result && result.length > 0) {
         const { label, score } = result[0];
         setPrediction({ [label]: Math.round(score.toFixed(2) * 100) });
+        insertNewScan(label);
       } else {
         setPrediction(null);
         setError("No results found. Please try again.");
@@ -496,7 +498,7 @@ const BinTitle = ({ binType }) => {
       }
     }
     return { binType: null, recyclability: null }; // Return null if item not classified
-  }
+  };
 
   const getBinDescription = (binType) => {
     switch (binType) {

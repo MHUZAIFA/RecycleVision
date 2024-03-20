@@ -1,11 +1,11 @@
 import {
   deleteDatabase,
   getLevel,
-  getNbrOfScans,
+  getNbrOfScans, getScansPerDate,
   getStreak,
 } from "@/lib/gamification/dbUtils";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Alert,
   Dimensions,
@@ -18,7 +18,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { PageIndicator } from "react-native-page-indicator";
 import PagerView from "react-native-pager-view";
 import { Bar } from "react-native-progress";
 import LineGraph from "../(components)/LineGraph";
@@ -37,16 +36,10 @@ import walmart_locked from "../../assets/coupons/WALMART_LOCKED.png";
 import icon from "../../assets/favicon.png";
 
 import { PageIndicator } from "react-native-page-indicator";
-import {
-  deleteDatabase,
-  getLevel,
-  getNbrOfScans,
-  getStreak,
-} from "@/lib/gamification/dbUtils";
-import { useEffect, useState } from "react";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect, useNavigation, usePathname } from "expo-router";
+import { LineData } from "@/assets/data/info";
 
 export default function Tab() {
   const [title, setTitle] = useState("Eco Warrior");
@@ -56,6 +49,9 @@ export default function Tab() {
   const [nextTitle, setNextTitle] = useState("Eco Warrior II");
   const [currentPic, setCurrentPic] = useState(0);
   const [profielPic, setProfilePic] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [lineData, setLineData] = useState(LineData);
+  const navigation = usePathname();
 
   // using Fibonacci sequence to determine the #scans needed to reach the next level
   const couponsByStreak = {
@@ -90,7 +86,7 @@ export default function Tab() {
         },
         {
           text: "OK",
-          onPress: () => deleteDatabase(),
+          onPress: () => deleteDatabase().then(() => setLoading(!loading)),
         },
       ],
       { cancelable: false }
@@ -128,7 +124,7 @@ export default function Tab() {
     }
   };
 
-  useEffect(() => {
+  const refreshData = useCallback( () => {
     getNbrOfScans().then((nbrOfScans) => {
       setNbrOfScans(nbrOfScans);
     });
@@ -150,8 +146,17 @@ export default function Tab() {
       }
     };
 
+    getScansPerDate().then((data) => {
+      console.log('data', data);
+      setLineData(data);
+    });
+
     getPic();
-  }, []);
+  }, [navigation]);
+
+  useEffect(() => {
+    refreshData();
+  }, [navigation]);
 
   return (
     <SafeAreaView className="bg-background">
@@ -218,7 +223,7 @@ export default function Tab() {
             />
           </View>
           <View className="flex-col w-screen space-y-1.25">
-            <LineGraph />
+            <LineGraph nbrOfScans={nbrOfScans} lineData={lineData}/>
           </View>
           <View className="flex-col w-screen space-y-1.25">
             <PieGraph />

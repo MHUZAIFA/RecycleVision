@@ -3,18 +3,18 @@ import { Text, View } from "react-native";
 import { LineChart } from "react-native-chart-kit";
 import { LineData } from "../../assets/data/info";
 
-const LineGraph = () => {
+const LineGraph = (props) => {
   return (
     <View className="w-[355px] h-[335px] flex flex-col rounded-xl border-2 border-gray-400">
       <View className="flex flex-row justify-between w-[100%] h-[33%] p-8">
         <View className="flex-col justify-center">
-          <Text className="text-3xl font-semibold">142</Text>
+          <Text className="text-3xl font-semibold">{props.nbrOfScans}</Text>
           <Text className="text-sm text-gray-500">Items scanned</Text>
         </View>
         <FontAwesome name="info-circle" size={26} color="black" />
       </View>
       <LineChart
-        data={LineData}
+        data={props.lineData}
         width={350}
         height={220}
         chartConfig={{
