@@ -3,7 +3,7 @@ import { PieChart } from "react-native-chart-kit";
 
 const PieGraph = (props) => {
   const colorMapping = {
-    "Paper & Cardboard": "#0000FF",
+    "Paper/Cardboard": "#0000FF",
     "Other Recyclables": "#008000",
     "Food Organics": "#A52A2A",
     "General Waste": "#000000",
@@ -17,7 +17,7 @@ const PieGraph = (props) => {
       newKey = "Other Recyclables";
     }
     if (key === "cardboard/paper") {
-      newKey = "Paper & Cardboard";
+      newKey = "Paper/Cardboard";
     }
     if (key === "organic") {
       newKey = "Food Organics";

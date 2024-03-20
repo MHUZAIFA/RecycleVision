@@ -48,7 +48,7 @@ export default function Tab() {
   const [nextLevelScans, setNextLevelScans] = useState(5);
   const [nextTitle, setNextTitle] = useState("Eco Warrior II");
   const [currentPic, setCurrentPic] = useState(0);
-  const [profielPic, setProfilePic] = useState(null);
+  const [profilePic, setProfilePic] = useState(null);
   const [loading, setLoading] = useState(false);
   const [lineData, setLineData] = useState(LineData);
   const navigation = usePathname();
@@ -187,7 +187,7 @@ export default function Tab() {
               className="w-[50px] h-[50px] flex justify-center items-center"
               onPress={handleImage}>
               <Image
-                source={profielPic ? { uri: profielPic } : user}
+                source={profilePic ? { uri: profilePic } : user}
                 className="w-[100%] h-[100%] rounded-full"
               />
             </TouchableOpacity>
