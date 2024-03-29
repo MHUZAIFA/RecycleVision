@@ -40,7 +40,15 @@ const PieGraph = (props) => {
   }
 
   return (
-    <View className="w-full flex flex-col rounded-xl border-2 border-gray-400 mb-3">
+    <View className="w-full flex flex-col rounded-xl border-2 border-gray-400 mb-3" style={{
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 2,
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 3.84
+    }}>
       <View className="flex flex-row justify-center mt-5 mb-2">
         <Text className="text-sm text-gray-500" style={{ fontSize: 20 }}>
           Types of Items Scanned
@@ -49,7 +57,7 @@ const PieGraph = (props) => {
       <View style={styles.rectangle}></View>
       <PieChart
         data={chartData}
-        width={380}
+        width={360}
         height={200}
         chartConfig={{
           color: (opacity = 1) => `rgba(128, 0, 128, ${opacity})`,
@@ -77,7 +85,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     zIndex: 1,
     top: 112,
-    left: 60,
+    left: 56,
     borderRadius: 50,
     // borderColor: 'red',
     // borderWidth: 23
@@ -86,3 +94,4 @@ const styles = StyleSheet.create({
 
 
 export default PieGraph;
+
