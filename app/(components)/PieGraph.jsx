@@ -1,5 +1,6 @@
 import { Text, View, StyleSheet } from "react-native";
 import { PieChart } from "react-native-chart-kit";
+import { Dimensions } from 'react-native';
 
 const PieGraph = (props) => {
   const colorMapping = {
@@ -39,6 +40,8 @@ const PieGraph = (props) => {
     return <Text>No data available</Text>;
   }
 
+  const screenWidth = Dimensions.get('window').width - 45;
+
   return (
     <View className="w-full flex flex-col rounded-xl border-2 border-gray-400 mb-3" style={{
       shadowColor: "#000",
@@ -54,10 +57,10 @@ const PieGraph = (props) => {
           Types of Items Scanned
         </Text>
       </View>
-      <View style={styles.rectangle}></View>
+      <View style={[styles.rectangle, {left: 5 + screenWidth*0.133}]}></View>
       <PieChart
         data={chartData}
-        width={360}
+        width={screenWidth}
         height={200}
         chartConfig={{
           color: (opacity = 1) => `rgba(128, 0, 128, ${opacity})`,
@@ -68,9 +71,7 @@ const PieGraph = (props) => {
         }}
         accessor={"population"}
         backgroundColor={"transparent"}
-        // paddingLeft={"0"}
-        // center={[0, 0]}
-        // absolute
+        absolute
       />
     </View>
   );
@@ -81,14 +82,10 @@ const styles = StyleSheet.create({
     width: 70, // width of the rectangle
     height: 70, // height of the rectangle
     backgroundColor: '#fff', // color of the rectangle
-    // backgroundColor: 'transparent',
     position: 'absolute',
     zIndex: 1,
     top: 112,
-    left: 56,
-    borderRadius: 50,
-    // borderColor: 'red',
-    // borderWidth: 23
+    borderRadius: 50
   },
 });
 
