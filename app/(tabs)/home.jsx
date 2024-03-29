@@ -175,85 +175,99 @@ export default function Tab() {
 
   return (
     <>
-    <SafeAreaView className="bg-white">
-      <ScrollView>
-        <View className="flex-col w-screen p-5 bg-white">
-          <View className="flex flex-row w-full justify-between items-center">
-            <View className="flex-col justify-center space-y-2.5 mb-2">
-              <Text className="text-xl">Hello 👋</Text>
-              <Text className="text-2xl font-bold">{title}</Text>
-            </View>
-            <TouchableOpacity
-              className="w-[50px] h-[50px] flex justify-center items-center"
-              onPress={handleImage}>
-              <Image
-                source={profilePic ? { uri: profilePic } : user}
-                className="w-[100%] h-[100%] rounded-full"
-              />
-            </TouchableOpacity>
-          </View>
-          <Text className="text-sm">Streak: {getStreakText()}</Text>
-          <View className="flex flex-col w-full my-5">
-            <Text className="text-progress mb-3">{nbrOfScans} total scans</Text>
-            <Bar
-              progress={nbrOfScans / nextLevelScans}
-              width={null}
-              color={PRIMARY}
-            />
-            <View className="flex flex-row w-full justify-end mt-3">
-              <Text>
-                {getScansToNextLevelText()}
-                <Text className="text-progress">{nextTitle}</Text>
-              </Text>
-            </View>
-          </View>
-          <View className="flex flex-col w-full align-center">
-            <Text className="font-semibold text-xl mb-2">Coupons</Text>
-          </View>
-          <View className="flex h-[100px] shadow-3xl">
-            <PagerView
-              className="flex-1"
-              initialPage={0}
-              onPageSelected={(e) => setCurrentPic(e.nativeEvent.position)}>
-              {couponMap?.map((coupon, index) => (
+      <SafeAreaView className="bg-white">
+        <ScrollView>
+          <View className="flex-col w-screen p-5 bg-white">
+            <View className="flex flex-row w-full justify-between items-center">
+              <View className="flex-col justify-center space-y-2.5 mb-2">
+                <Text className="text-xl">Hello 👋</Text>
+                <Text className="text-2xl font-bold">{title}</Text>
+              </View>
+              <TouchableOpacity
+                className="w-[50px] h-[50px] flex justify-center items-center"
+                onPress={handleImage}>
                 <Image
-                  source={coupon}
-                  resizeMode="contain" // Adjust the resizeMode here
-                  className="justify-center items-center rounded-xl w-full h-full"
-                  key={index}
+                  source={profilePic ? { uri: profilePic } : user}
+                  className="w-[100%] h-[100%] rounded-full"
                 />
-              ))}
-            </PagerView>
+              </TouchableOpacity>
+            </View>
+            <Text className="text-sm">Streak: {getStreakText()}</Text>
+            <View className="flex flex-col w-full my-5">
+              <Text className="text-progress mb-3">{nbrOfScans} total scans</Text>
+              <Bar
+                progress={nbrOfScans / nextLevelScans}
+                width={null}
+                color={PRIMARY}
+                unfilledColor={'#E1E1E1'}
+                borderColor={'#272727'}
+                borderWidth={0}
+                height={8}
+              />
+              <View className="flex flex-row w-full justify-end mt-3">
+                <Text>
+                  {getScansToNextLevelText()}
+                  <Text className="text-progress">{nextTitle}</Text>
+                </Text>
+              </View>
+            </View>
+            <View className="flex flex-col w-full align-center">
+              <Text className="font-semibold text-xl mb-2">Coupons</Text>
+            </View>
+            <View className="flex h-[120px]">
+              <PagerView
+                className="flex-1"
+                initialPage={0}
+                onPageSelected={(e) => setCurrentPic(e.nativeEvent.position)}>
+                {couponMap?.map((coupon, index) => (
+                  <Image
+                    source={coupon}
+                    resizeMode="contain" // Adjust the resizeMode here
+                    className="justify-center items-center rounded-xl w-full h-full"
+                    style={{
+                      shadowColor: "#000",
+                      shadowOffset: {
+                        width: 0,
+                        height: 2,
+                      },
+                      shadowOpacity: 0.25,
+                      shadowRadius: 3.84
+                    }}
+                    key={index}
+                  />
+                ))}
+              </PagerView>
+            </View>
+            <View className="flex w-full mt-2 mb-3">
+              <PageIndicator
+                className="mb-5"
+                count={couponMap.length}
+                current={currentPic}
+                variant="beads"
+              />
+            </View>
+            <View className="flex flex-col w-full mb-3">
+              <LineGraph nbrOfScans={nbrOfScans} lineData={lineData} />
+            </View>
+            <View className="flex flex-col w-full mb-3">
+              <PieGraph nbrOfScans={nbrOfScans} pieData={pieData} />
+            </View>
+            <View className="flex-col w-screen space-y-1.25">
+              <SupportBanner />
+            </View>
+            <View className="flex-col w-[90%]">
+              <Pressable
+                className="h-12 rounded-lg justify-center items-center"
+                onPress={onPressDelete}>
+                <Text className="text-transparent font-bold text-2xl">
+                  DELETE DB
+                </Text>
+              </Pressable>
+            </View>
           </View>
-          <View className="flex w-full mt-2 mb-3">
-            <PageIndicator
-              className="mb-5"
-              count={couponMap.length}
-              current={currentPic}
-              variant="beads"
-            />
-          </View>
-          <View className="flex flex-col w-full mb-3">
-            <LineGraph nbrOfScans={nbrOfScans} lineData={lineData} />
-          </View>
-          <View className="flex flex-col w-full mb-3">
-            <PieGraph nbrOfScans={nbrOfScans} pieData={pieData} />
-          </View>
-          <View className="flex-col w-screen space-y-1.25">
-            <SupportBanner />
-          </View>
-          <View className="flex-col w-[90%]">
-            <Pressable
-              className="h-12 rounded-lg justify-center items-center"
-              onPress={onPressDelete}>
-              <Text className="text-transparent font-bold text-2xl">
-                DELETE DB
-              </Text>
-            </Pressable>
-          </View>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+        </ScrollView>
+      </SafeAreaView>
     </>
   );
 }
+
