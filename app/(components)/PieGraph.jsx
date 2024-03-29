@@ -28,8 +28,7 @@ const PieGraph = (props) => {
 
     return {
       name: newKey,
-      // population: props.pieData[key],
-      population: 25,
+      population: props.pieData[key],
       color: colorMapping[newKey],
       legendFontColor: "#7F7F7F",
       legendFontSize: 12,

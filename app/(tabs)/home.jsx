@@ -175,7 +175,7 @@ export default function Tab() {
 
   return (
     <>
-    <SafeAreaView className="bg-background">
+    <SafeAreaView className="bg-white">
       <ScrollView>
         <View className="flex-col w-screen p-5 bg-white">
           <View className="flex flex-row w-full justify-between items-center">
