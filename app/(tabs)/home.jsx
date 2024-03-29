@@ -174,14 +174,14 @@ export default function Tab() {
   }, [navigation]);
 
   return (
+    <>
     <SafeAreaView className="bg-background">
       <ScrollView>
-        <View className="flex-col w-screen mx-5 space-y-3.5 my-9">
-          <View className="flex flex-row w-[90%] justify-between">
+        <View className="flex-col w-screen p-5 bg-white">
+          <View className="flex flex-row w-full justify-between items-center">
             <View className="flex-col justify-center space-y-2.5 mb-2">
-              <Text className="text-2xl">Hello 👋</Text>
-              <Text className="text-3xl font-bold">{title}</Text>
-              <Text className="text-sm">Streak: {getStreakText()}</Text>
+              <Text className="text-xl">Hello 👋</Text>
+              <Text className="text-2xl font-bold">{title}</Text>
             </View>
             <TouchableOpacity
               className="w-[50px] h-[50px] flex justify-center items-center"
@@ -192,25 +192,25 @@ export default function Tab() {
               />
             </TouchableOpacity>
           </View>
-          <View className="flex flex-col w-screen gap-1">
-            <Text className="text-progress">{nbrOfScans} total scans</Text>
+          <Text className="text-sm">Streak: {getStreakText()}</Text>
+          <View className="flex flex-col w-full my-5">
+            <Text className="text-progress mb-3">{nbrOfScans} total scans</Text>
             <Bar
               progress={nbrOfScans / nextLevelScans}
-              width={Dimensions.get("screen").width * 0.9}
+              width={null}
               color={PRIMARY}
             />
-            <View className="flex flex-row w-[90%] justify-between mb-2">
-              <Text className="text-progress"></Text>
+            <View className="flex flex-row w-full justify-end mt-3">
               <Text>
                 {getScansToNextLevelText()}
                 <Text className="text-progress">{nextTitle}</Text>
               </Text>
             </View>
           </View>
-          <View className="flex flex-col w-[90%] align-center">
-            <Text className="font-semibold text-base">Coupons</Text>
+          <View className="flex flex-col w-full align-center">
+            <Text className="font-semibold text-xl mb-2">Coupons</Text>
           </View>
-          <View className="flex w-[90%] h-[100px] shadow-3xl">
+          <View className="flex h-[100px] shadow-3xl">
             <PagerView
               className="flex-1"
               initialPage={0}
@@ -225,7 +225,7 @@ export default function Tab() {
               ))}
             </PagerView>
           </View>
-          <View className="flex w-[90%]">
+          <View className="flex w-full mt-2 mb-3">
             <PageIndicator
               className="mb-5"
               count={couponMap.length}
@@ -233,10 +233,10 @@ export default function Tab() {
               variant="beads"
             />
           </View>
-          <View className="flex-col w-screen space-y-1.25">
+          <View className="flex flex-col w-full mb-3">
             <LineGraph nbrOfScans={nbrOfScans} lineData={lineData} />
           </View>
-          <View className="flex-col w-screen space-y-1.25">
+          <View className="flex flex-col w-full mb-3">
             <PieGraph nbrOfScans={nbrOfScans} pieData={pieData} />
           </View>
           <View className="flex-col w-screen space-y-1.25">
@@ -254,5 +254,6 @@ export default function Tab() {
         </View>
       </ScrollView>
     </SafeAreaView>
+    </>
   );
 }
