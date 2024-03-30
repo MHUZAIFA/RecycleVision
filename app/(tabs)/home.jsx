@@ -252,7 +252,7 @@ export default function Tab() {
             <View className="flex flex-col w-full mb-3">
               <PieGraph nbrOfScans={nbrOfScans} pieData={pieData} />
             </View>
-            <View className="flex-col w-screen space-y-1.25">
+            <View className="flex-col w-full mb-3">
               <SupportBanner />
             </View>
             <View className="flex-col w-[90%]">

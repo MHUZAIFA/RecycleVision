@@ -1,8 +1,8 @@
-import { Text, View, StyleSheet } from "react-native";
-import { PieChart } from "react-native-chart-kit";
-import { Dimensions } from 'react-native';
+import { Text, View } from "react-native";
+import { PieChart } from 'react-native-svg-charts'
 
 const PieGraph = (props) => {
+
   const colorMapping = {
     "Paper/Cardboard": "#1D7AAD",
     "Other Recyclables": "#1DAD98",
@@ -10,10 +10,8 @@ const PieGraph = (props) => {
     "General Waste": "#171717",
   };
 
-  const chartData = Object.keys(props.pieData).map((key) => {
-    let newKey = key;
-
-    // Rename the keys
+  const label = (key) => {
+    let newKey = 'trash';
     if (key === "metal/glass/plastic") {
       newKey = "Other Recyclables";
     }
@@ -26,24 +24,26 @@ const PieGraph = (props) => {
     if (key === "trash") {
       newKey = "General Waste";
     }
+    return newKey;
+  };
 
-    return {
-      name: newKey,
-      population: props.pieData[key],
-      color: colorMapping[newKey],
-      legendFontColor: "#7F7F7F",
-      legendFontSize: 12,
-    };
-  });
+  const colorPicker = (key) => {
+    return colorMapping[label(key)];
+  };
 
-  if (!chartData.length) {
-    return <Text>No data available</Text>;
-  }
+  const pieData = Object.entries(props.pieData)
+    .filter(([key, value]) => value > 0)
+    .map(([key, value], index) => ({
+      value,
+      svg: {
+        fill: colorPicker(key),
+        onPress: () => console.log('press', index),
+      },
+      key: `pie-${index}`,
+    }));
 
-  const screenWidth = Dimensions.get('window').width - 45;
-
-  return (
-    <View className="w-full flex flex-col rounded-xl border-2 border-gray-400 mb-3" style={{
+  return (<>
+    <View className="w-full flex flex-col rounded-xl border-2 border-gray-400 mb-3 pt-2 pb-3" style={{
       shadowColor: "#000",
       shadowOffset: {
         width: 0,
@@ -53,42 +53,28 @@ const PieGraph = (props) => {
       shadowRadius: 3.84
     }}>
       <View className="flex flex-row justify-center mt-5 mb-2">
-        <Text className="text-sm text-gray-500" style={{ fontSize: 20 }}>
+        <Text className="text-sm text-zinc-900" style={{ fontSize: 20 }}>
           Types of Items Scanned
         </Text>
       </View>
-      <View style={[styles.rectangle, {left: 5 + screenWidth*0.133}]}></View>
-      <PieChart
-        data={chartData}
-        width={screenWidth}
-        height={200}
-        chartConfig={{
-          color: (opacity = 1) => `rgba(128, 0, 128, ${opacity})`,
-          labelColor: (opacity = 1) => `rgba(55, 55, 55, ${opacity})`
-        }}
-        style={{
-          borderRadius: 12,
-        }}
-        accessor={"population"}
-        backgroundColor={"transparent"}
-        absolute
-      />
+      <View className="py-5">
+        <PieChart style={{ height: 200 }} data={pieData} />
+      </View>
+      <View className="flex flex-row w-full justify-center p-3 flex-wrap">
+        {
+        Object.keys(props.pieData).map((item, index) => (
+          <View key={index} className="flex flex-row items-center mr-4">
+            <View style={{ width: 20, height: 20, backgroundColor: colorPicker(item), borderRadius: 50 }}></View>
+            <Text className="ml-2 my-2 text-xs text-zinc-800 tracking-wide">
+              {label(item)}
+            </Text>
+          </View>
+        ))}
+      </View>
     </View>
-  );
+  </>)
 };
 
-const styles = StyleSheet.create({
-  rectangle: {
-    width: 70, // width of the rectangle
-    height: 70, // height of the rectangle
-    backgroundColor: '#fff', // color of the rectangle
-    position: 'absolute',
-    zIndex: 1,
-    top: 112,
-    borderRadius: 50
-  },
-});
-
-
 export default PieGraph;
+
 
