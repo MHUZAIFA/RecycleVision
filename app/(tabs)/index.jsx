@@ -3,7 +3,7 @@ import { insertNewScan } from "@/lib/gamification/dbUtils";
 import { useIsFocused } from "@react-navigation/core";
 import { AutoFocus, Camera, CameraType, ImageType } from "expo-camera";
 import { useNavigation } from "expo-router";
-import { Check, RotateCcw, X } from "lucide-react-native";
+import { RotateCcw } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -115,6 +115,7 @@ export default function CameraScreen() {
           await cameraRef.current.pausePreview();
           setIsPreview(true);
           setimage(pic);
+          processImage();
         }
       } catch (e) {
         setError("Capturing Error\nTry again");
@@ -124,6 +125,7 @@ export default function CameraScreen() {
   };
 
   const processImage = async () => {
+    console.log('processing image')
     setIsLoading(true);
     try {
       const response = await fetch(image.uri);
@@ -239,38 +241,31 @@ export default function CameraScreen() {
     );
   };
 
-  const CancelPreview = () => {
-    return (
-      <TouchableOpacity
-        onPress={resetCameraScreen}
-        className="absolute top-14 left-6 h-10 w-10 bg-gray-300 rounded-full items-center justify-center">
-        <X color={"black"} size={24} />
-      </TouchableOpacity>
-    );
-  };
-
-  const ConfirmationPhase = () => {
+  const ProcessingError = () => {
     return (
       <View
-        className={`bottom-10 justify-between items-center flex-1 flex-row mx-16 p-2 rounded-xl shadow-xl 
-                    ${!error ? "bg-white" : "bg-red-400"}`}>
+        className={'bottom-10 justify-between items-center flex-1 flex-row mx-3 w-fit rounded-lg px-3 py-2'}
+        style={{
+          backgroundColor: '#D64545', shadowColor: "#000",
+          shadowOffset: {
+            width: 0,
+            height: 2,
+          },
+          shadowOpacity: 0.25,
+          shadowRadius: 3.84,
+
+          elevation: 5,
+        }}>
+        <Text className="font-semibold text-left text-slate-100 tracking-wide">
+          An error occured while processing image.
+        </Text>
         <TouchableOpacity
           onPress={resetCameraScreen}
-          style={{ backgroundColor: "#E9E9E9", padding: 10 }}
-          className="rounded-xl">
-          <RotateCcw color={"black"} size={24} />
+          style={{ backgroundColor: "#B93B3B", padding: 10 }}
+          className="rounded-lg">
+          <RotateCcw color={"white"} size={24} />
         </TouchableOpacity>
-        <Text className="font-bold text-md text-center">{error ? error : "Submit ?"}</Text>
-        <TouchableOpacity
-          disabled={error ? true : false}
-          onPress={processImage}
-          style={{
-            backgroundColor: !error ? PRIMARY : "#676767",
-            padding: 10,
-          }}
-          className="rounded-xl">
-          <Check color={"white"} size={24} />
-        </TouchableOpacity>
+
       </View >
     );
   };
@@ -346,6 +341,7 @@ export default function CameraScreen() {
     },
     closeButton: {
       marginTop: 20,
+      marginBottom: 20,
       backgroundColor: PRIMARY,
       alignSelf: "center",
       width: "100%",
@@ -646,15 +642,19 @@ export default function CameraScreen() {
             onMountError={(error) => <Error error={error} />}
             ref={cameraRef}>
             <View className="flex-1 flex-row bg-transparent justify-between items-end">
-              {!isPreview ? <CaptureControl /> : <ConfirmationPhase />}
-              {isLoading && <Loading />}
-              {prediction && (
-                <BottomSheet
-                  isVisible={bottomSheetVisible}
-                  onClose={closeBottomSheet}
-                  prediction={prediction}
-                />
-              )}
+            {
+              isLoading ? 
+              <Loading /> : 
+                !isPreview ?
+                  <CaptureControl /> : 
+                    error ? <ProcessingError /> :
+                    prediction ?
+                      <BottomSheet
+                        isVisible={bottomSheetVisible}
+                        onClose={closeBottomSheet}
+                        prediction={prediction}
+                      /> : ''
+            }
             </View>
           </Camera>
         ) : (

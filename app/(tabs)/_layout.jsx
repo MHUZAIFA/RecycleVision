@@ -14,9 +14,17 @@ export default function TabLayout() {
           headerShown: false,
           tabBarStyle: {
             backgroundColor: "#fff",
-            height: 60,
+            height: 65,
             paddingTop: 10,
             paddingBottom: 10,
+            shadowColor: "#000",
+            shadowOffset: {
+              width: 0,
+              height: 12,
+            },
+            shadowOpacity: 0.9,
+            shadowRadius: 5.0,
+            elevation: 8,
           },
           tabBarIcon: ({ focused, color, size }) => {
             let iconName;
@@ -66,3 +74,4 @@ export default function TabLayout() {
     </>
   );
 }
+

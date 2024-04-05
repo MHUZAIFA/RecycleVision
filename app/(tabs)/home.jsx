@@ -14,7 +14,6 @@ import { usePathname } from "expo-router";
 import { useCallback, useEffect, useState } from "react";
 import {
   Alert,
-  Dimensions,
   Image,
   Pressable,
   SafeAreaView,
@@ -22,6 +21,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Platform
 } from "react-native";
 import { PageIndicator } from "react-native-page-indicator";
 import PagerView from "react-native-pager-view";
@@ -108,11 +108,11 @@ export default function Tab() {
   const getStreakText = () => {
     switch (streak) {
       case 0:
-        return "0";
+        return "0 Days";
       case 1:
         return "1 Day";
       default:
-        return `${streak} Days 🔥`;
+        return `${streak} Days`;
     }
   };
 
@@ -178,13 +178,13 @@ export default function Tab() {
       <SafeAreaView className="bg-white">
         <ScrollView>
           <View className="flex-col w-screen p-5 bg-white">
-            <View className="flex flex-row w-full justify-between items-center">
-              <View className="flex-col justify-center space-y-2.5 mb-2">
+            <View className={`flex flex-row w-full justify-between items-center ${Platform.OS === 'ios' ? '' : 'mt-5'}`}>
+              <View className="flex-col justify-center mb-1">
                 <Text className="text-xl">Hello 👋</Text>
                 <Text className="text-2xl font-bold">{title}</Text>
               </View>
               <TouchableOpacity
-                className="w-[50px] h-[50px] flex justify-center items-center"
+                className="w-[60px] h-[60px] flex justify-center items-center border-2 rounded-full"
                 onPress={handleImage}>
                 <Image
                   source={profilePic ? { uri: profilePic } : user}
@@ -192,7 +192,7 @@ export default function Tab() {
                 />
               </TouchableOpacity>
             </View>
-            <Text className="text-sm">Streak: {getStreakText()}</Text>
+            <Text className="text-sm"><Text className="text-zinc-500 font-semibold">Streak:</Text> {getStreakText()} {Array((Math.ceil(streak/2))).fill('🔥').join('')} </Text>
             <View className="flex flex-col w-full my-5">
               <Text className="text-progress mb-3">{nbrOfScans} total scans</Text>
               <Bar
@@ -212,7 +212,7 @@ export default function Tab() {
               </View>
             </View>
             <View className="flex flex-col w-full align-center">
-              <Text className="font-semibold text-xl mb-2">Coupons</Text>
+              <Text className="font-semibold text-xl mb-1">Coupons</Text>
             </View>
             <View className="flex h-[120px]">
               <PagerView
@@ -223,7 +223,7 @@ export default function Tab() {
                   <Image
                     source={coupon}
                     resizeMode="contain" // Adjust the resizeMode here
-                    className="justify-center items-center rounded-xl w-full h-full"
+                    className="justify-center items-center rounded-lg w-full h-full"
                     style={{
                       shadowColor: "#000",
                       shadowOffset: {
@@ -240,19 +240,19 @@ export default function Tab() {
             </View>
             <View className="flex w-full mt-2 mb-3">
               <PageIndicator
-                className="mb-5"
+                className="mb-3"
                 count={couponMap.length}
                 current={currentPic}
                 variant="beads"
               />
             </View>
-            <View className="flex flex-col w-full mb-3">
+            <View className="flex flex-col w-full mb-2">
               <LineGraph nbrOfScans={nbrOfScans} lineData={lineData} />
             </View>
-            <View className="flex flex-col w-full mb-3">
+            <View className="flex flex-col w-full mb-2">
               <PieGraph nbrOfScans={nbrOfScans} pieData={pieData} />
             </View>
-            <View className="flex-col w-full mb-3">
+            <View className="flex-col w-full mb-2">
               <SupportBanner />
             </View>
             <View className="flex-col w-[90%]">
@@ -270,4 +270,5 @@ export default function Tab() {
     </>
   );
 }
+
 
