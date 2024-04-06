@@ -282,8 +282,8 @@ export default function CameraScreen() {
 
   const Loading = () => {
     return (
-      <View className="absolute w-full h-full flex-1 flexitems-center justify-center bg-white opacity-50 px-4">
-        <ActivityIndicator size="large" color={PRIMARY} />
+      <View className="absolute w-full h-full flex-1 flexitems-center justify-center bg-black 0 px-4" style={{ backgroundColor: '#000000b3' }}>
+        <ActivityIndicator size="large" color={PRIMARY} style={{transform: [{ scale: 2 }]}} />
       </View>
     );
   };
