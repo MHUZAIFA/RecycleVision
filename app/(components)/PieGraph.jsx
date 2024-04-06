@@ -43,7 +43,13 @@ const PieGraph = (props) => {
     }));
 
   return (<>
-    <View className="w-full flex flex-col rounded-xl border-2 border-gray-400 mb-3 pt-2 pb-3" style={{
+    <View className="w-full flex flex-col rounded-lg border-2 border-gray-550 mb-3 pt-2 pb-3">
+      <View className="flex flex-row justify-center mt-5 mb-2">
+        <Text className="text-sm text-zinc-900" style={{ fontSize: 20 }}>
+          Types of Items Scanned
+        </Text>
+      </View>
+      <View className="py-5" style={{
       shadowColor: "#000",
       shadowOffset: {
         width: 0,
@@ -52,15 +58,9 @@ const PieGraph = (props) => {
       shadowOpacity: 0.25,
       shadowRadius: 3.84
     }}>
-      <View className="flex flex-row justify-center mt-5 mb-2">
-        <Text className="text-sm text-zinc-900" style={{ fontSize: 20 }}>
-          Types of Items Scanned
-        </Text>
-      </View>
-      <View className="py-5">
         <PieChart style={{ height: 200 }} data={pieData} />
       </View>
-      <View className="flex flex-row w-full justify-center p-3 flex-wrap">
+      <View className="flex flex-row w-full justify-center p-3 flex-wrap" >
         {
         Object.keys(props.pieData).map((item, index) => (
           <View key={index} className="flex flex-row items-center mr-4">

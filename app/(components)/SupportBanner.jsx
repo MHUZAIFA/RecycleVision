@@ -8,7 +8,7 @@ const SupportBanner = () => {
   };
   return (
     <TouchableOpacity
-      className="flex flex-row justify-between items-center border-gray-400 border-2 w-full rounded-xl p-4 pr-6"
+      className="flex flex-row justify-between items-center border-2 w-full rounded-lg border-gray-550 p-4 pr-6"
       onPress={handleSend}>
       <View className="flex flex-row justify-center items-center">
       <MaterialIcons name="contact-support" size={50} color="#272727" />
