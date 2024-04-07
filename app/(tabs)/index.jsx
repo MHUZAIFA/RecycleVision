@@ -125,7 +125,6 @@ export default function CameraScreen() {
   };
 
   const processImage = async () => {
-    console.log('processing image')
     setIsLoading(true);
     try {
       const response = await fetch(image.uri);
@@ -283,7 +282,7 @@ export default function CameraScreen() {
   const Loading = () => {
     return (
       <View className="absolute w-full h-full flex-1 flexitems-center justify-center bg-black 0 px-4" style={{ backgroundColor: '#000000b3' }}>
-        <ActivityIndicator size="large" color={PRIMARY} style={{transform: [{ scale: 2 }]}} />
+        <ActivityIndicator size="large" color={PRIMARY} style={{ transform: [{ scale: 2 }] }} />
       </View>
     );
   };
@@ -464,19 +463,25 @@ export default function CameraScreen() {
         onRequestClose={onClose}>
         <TouchableOpacity activeOpacity={1} style={styles.modalOverlay}>
           <View style={styles.bottomSheet}>
-            <Text style={styles.bottomSheetTitle}>
-              {recyclability}{" "}
-              <Text
-                style={{
-                  fontWeight: "500",
-                  textTransform: "capitalize",
-                  color: "#565656",
-                  fontSize: 14,
-                }}>
-                ({classification})
-              </Text>
-            </Text>
-            <BinTitle binType={binType} />
+            {binType ? (
+              <>
+                <Text style={styles.bottomSheetTitle}>
+                  {recyclability}{" "}
+                  <Text
+                    style={{
+                      fontWeight: "500",
+                      textTransform: "capitalize",
+                      color: "#565656",
+                      fontSize: 14,
+                    }}
+                  >
+                    ({classification})
+                  </Text>
+                </Text>
+                <BinTitle binType={binType} />
+              </>
+            ) : null}
+
             <Text style={styles.bottomSheetBinDescription}>
               {getBinDescription(binType)}
             </Text>
@@ -506,7 +511,7 @@ export default function CameraScreen() {
   // Define dictionary with bin types, recyclability, and corresponding items
   const binItems = {
     [BinType.BLUE]: {
-      items: ["paper", "cardboard"],
+      items: ["paper", "cardboard", "glass"],
       recyclability: Recyclability.RECYCLABLE,
     },
     [BinType.GREEN]: {
@@ -622,7 +627,10 @@ export default function CameraScreen() {
           </>
         );
       default:
-        return <Text>Bin type not recognized.</Text>;
+        return <>
+          <Text className="font-semibold tracking-wide mb-3 text-lg">Bin type not recognized.</Text>
+          <Text> {"\n"}Please try again or dispose the item to the best of your knowledge.  </Text>
+        </>;
     }
   };
 
@@ -642,19 +650,19 @@ export default function CameraScreen() {
             onMountError={(error) => <Error error={error} />}
             ref={cameraRef}>
             <View className="flex-1 flex-row bg-transparent justify-between items-end">
-            {
-              isLoading ? 
-              <Loading /> : 
-                !isPreview ?
-                  <CaptureControl /> : 
+              {
+                isLoading ?
+                  <Loading /> :
+                  !isPreview ?
+                    <CaptureControl /> :
                     error ? <ProcessingError /> :
-                    prediction ?
-                      <BottomSheet
-                        isVisible={bottomSheetVisible}
-                        onClose={closeBottomSheet}
-                        prediction={prediction}
-                      /> : ''
-            }
+                      prediction ?
+                        <BottomSheet
+                          isVisible={bottomSheetVisible}
+                          onClose={closeBottomSheet}
+                          prediction={prediction}
+                        /> : ''
+              }
             </View>
           </Camera>
         ) : (
