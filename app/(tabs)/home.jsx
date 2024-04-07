@@ -21,7 +21,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-  Platform
+  Platform,
 } from "react-native";
 import { PageIndicator } from "react-native-page-indicator";
 import PagerView from "react-native-pager-view";
@@ -40,8 +40,10 @@ import starbucks_locked from "../../assets/coupons/STARBUCKS_LOCKED.png";
 import walmart from "../../assets/coupons/WALMART.png";
 import walmart_locked from "../../assets/coupons/WALMART_LOCKED.png";
 import user from "../../assets/user.png";
+import LevelUp from "../(components)/LevelUp";
 
 export default function Tab() {
+  const [visable, setVisable] = useState(false);
   const [title, setTitle] = useState("Eco Warrior");
   const [streak, setStreak] = useState(2);
   const [nbrOfScans, setNbrOfScans] = useState(2);
@@ -53,6 +55,8 @@ export default function Tab() {
   const [lineData, setLineData] = useState(LineData);
   const navigation = usePathname();
   const [pieData, setPieData] = useState({});
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
 
   // using Fibonacci sequence to determine the #scans needed to reach the next level
   const couponsByStreak = {
@@ -142,6 +146,11 @@ export default function Tab() {
     });
 
     getLevel().then((level) => {
+      if (title !== level.currentTitle) {
+        setVisable(true);
+        setFrom(title);
+        setTo(level.currentTitle);
+      }
       setTitle(level.currentTitle);
       setNextTitle(level.nextTitle);
       setNextLevelScans(level.nextPoints);
@@ -177,8 +186,15 @@ export default function Tab() {
     <>
       <SafeAreaView className="bg-white">
         <ScrollView>
-          <View className="flex-col w-screen p-5 bg-white">
-            <View className={`flex flex-row w-full justify-between items-center ${Platform.OS === 'ios' ? '' : 'mt-5'}`}>
+          <View className="flex flex-col w-screen p-5 bg-white">
+            <LevelUp
+              visable={visable}
+              setVisable={setVisable}
+              from={from}
+              to={to}
+            />
+            <View
+              className={`flex flex-row w-full justify-between items-center ${Platform.OS === "ios" ? "" : "mt-5"}`}>
               <View className="flex-col justify-center mb-1">
                 <Text className="text-xl">Hello 👋</Text>
                 <Text className="text-2xl font-bold">{title}</Text>
@@ -192,15 +208,23 @@ export default function Tab() {
                 />
               </TouchableOpacity>
             </View>
-            <Text className="text-sm"><Text className="text-zinc-500 font-semibold">Streak:</Text> {getStreakText()} {Array((Math.ceil(streak/2))).fill('🔥').join('')} </Text>
+            <Text className="text-sm">
+              <Text className="text-zinc-500 font-semibold">Streak:</Text>{" "}
+              {getStreakText()}{" "}
+              {Array(Math.ceil(streak / 2))
+                .fill("🔥")
+                .join("")}{" "}
+            </Text>
             <View className="flex flex-col w-full my-5">
-              <Text className="text-progress mb-3">{nbrOfScans} total scans</Text>
+              <Text className="text-progress mb-3">
+                {nbrOfScans} total scans
+              </Text>
               <Bar
                 progress={nbrOfScans / nextLevelScans}
                 width={null}
                 color={PRIMARY}
-                unfilledColor={'#E1E1E1'}
-                borderColor={'#272727'}
+                unfilledColor={"#E1E1E1"}
+                borderColor={"#272727"}
                 borderWidth={0}
                 height={8}
               />
@@ -231,7 +255,7 @@ export default function Tab() {
                         height: 2,
                       },
                       shadowOpacity: 0.25,
-                      shadowRadius: 3.84
+                      shadowRadius: 3.84,
                     }}
                     key={index}
                   />
@@ -270,5 +294,3 @@ export default function Tab() {
     </>
   );
 }
-
-
