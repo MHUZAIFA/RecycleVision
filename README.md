@@ -51,6 +51,12 @@ npm run ios
 npm run web
 ```
 
+## Build
+
+```bash
+eas build -p android --profile preview
+```
+
 ## Usage
 
 Instructions on how to use the RecycleVision application...

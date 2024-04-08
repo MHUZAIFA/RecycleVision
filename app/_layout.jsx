@@ -7,8 +7,14 @@ NativeWindStyleSheet.setOutput({
 
 export default function AppLayout() {
   return (
-    <Stack>
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        // Enabling Status Bar Translucency on Android
+        // statusBarTranslucent: Platform.OS === "android" ? false : undefined,
+        // statusBarStyle: Platform.OS === "android" ? "dark" : undefined,
+      }}>
+      <Stack.Screen name="(tabs)" />
     </Stack>
   );
 }

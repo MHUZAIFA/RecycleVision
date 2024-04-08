@@ -15,7 +15,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import BarcodeMask from "react-native-barcode-mask";
 import blackBinImagePath from "../../assets/bins/black.png";
@@ -23,7 +23,7 @@ import blueBinImagePath from "../../assets/bins/blue.png";
 import greenBinImagePath from "../../assets/bins/green.png";
 import orangeBinImagePath from "../../assets/bins/orange.png";
 
-import * as Device from 'expo-device';
+import * as Device from "expo-device";
 
 export default function CameraScreen() {
   const cameraRef = useRef(null);
@@ -179,9 +179,9 @@ export default function CameraScreen() {
       [
         {
           text: "Cancel",
-          style: "cancel"
+          style: "cancel",
         },
-        { text: "Grant Permission", onPress: requestPermission }
+        { text: "Grant Permission", onPress: requestPermission },
       ],
       { cancelable: false }
     );
@@ -243,9 +243,12 @@ export default function CameraScreen() {
   const ProcessingError = () => {
     return (
       <View
-        className={'bottom-10 justify-between items-center flex-1 flex-row mx-3 w-fit rounded-lg px-3 py-2'}
+        className={
+          "bottom-10 justify-between items-center flex-1 flex-row mx-3 w-fit rounded-lg px-3 py-2"
+        }
         style={{
-          backgroundColor: '#D64545', shadowColor: "#000",
+          backgroundColor: "#D64545",
+          shadowColor: "#000",
           shadowOffset: {
             width: 0,
             height: 2,
@@ -264,8 +267,7 @@ export default function CameraScreen() {
           className="rounded-lg">
           <RotateCcw color={"white"} size={24} />
         </TouchableOpacity>
-
-      </View >
+      </View>
     );
   };
 
@@ -281,8 +283,14 @@ export default function CameraScreen() {
 
   const Loading = () => {
     return (
-      <View className="absolute w-full h-full flex-1 flexitems-center justify-center bg-black 0 px-4" style={{ backgroundColor: '#000000b3' }}>
-        <ActivityIndicator size="large" color={PRIMARY} style={{ transform: [{ scale: 2 }] }} />
+      <View
+        className="absolute w-full h-full flex-1 flexitems-center justify-center bg-black 0 px-4"
+        style={{ backgroundColor: "#000000b3" }}>
+        <ActivityIndicator
+          size="large"
+          color={PRIMARY}
+          style={{ transform: [{ scale: 2 }] }}
+        />
       </View>
     );
   };
@@ -364,7 +372,7 @@ export default function CameraScreen() {
     bottomSheetBinTitle: {
       fontSize: 20,
       fontWeight: "bold",
-      marginRight: 10
+      marginRight: 10,
     },
     blueBin: {
       color: "#0077c8",
@@ -379,12 +387,12 @@ export default function CameraScreen() {
       color: "#171717",
     },
     tinyImg: {
-      display: 'flex',
-      alignSelf: 'flex-end',
-      width: '100%',
-      height: '100%',
-      objectFit: 'contain'
-    }
+      display: "flex",
+      alignSelf: "flex-end",
+      width: "100%",
+      height: "100%",
+      objectFit: "contain",
+    },
   });
 
   // Function to render bin title with appropriate color style
@@ -411,13 +419,13 @@ export default function CameraScreen() {
       green: greenBinImagePath,
       blue: blueBinImagePath,
       orange: orangeBinImagePath,
-      black: blackBinImagePath
+      black: blackBinImagePath,
     };
 
     return (
       <>
-        <View style={{ display: 'flex', flexDirection: 'row' }}>
-          <View style={{ display: 'flex', flexDirection: 'column' }}>
+        <View style={{ display: "flex", flexDirection: "row" }}>
+          <View style={{ display: "flex", flexDirection: "column" }}>
             <Text
               style={{
                 fontSize: 14,
@@ -431,11 +439,15 @@ export default function CameraScreen() {
               <Text style={{ textTransform: "capitalize" }}>{binType}</Text> bin
             </Text>
           </View>
-          <View style={{ width: 50, height: 50, paddingTop: 10, justifyContent: 'center', alignItems: 'center' }}>
-            <Image
-              style={styles.tinyImg}
-              source={binsIconPaths[binType]}
-            />
+          <View
+            style={{
+              width: 50,
+              height: 50,
+              paddingTop: 10,
+              justifyContent: "center",
+              alignItems: "center",
+            }}>
+            <Image style={styles.tinyImg} source={binsIconPaths[binType]} />
           </View>
         </View>
         <View
@@ -473,8 +485,7 @@ export default function CameraScreen() {
                       textTransform: "capitalize",
                       color: "#565656",
                       fontSize: 14,
-                    }}
-                  >
+                    }}>
                     ({classification})
                   </Text>
                 </Text>
@@ -627,47 +638,58 @@ export default function CameraScreen() {
           </>
         );
       default:
-        return <>
-          <Text className="font-semibold tracking-wide mb-3 text-lg">Bin type not recognized.</Text>
-          <Text> {"\n"}Please try again or dispose the item to the best of your knowledge.  </Text>
-        </>;
+        return (
+          <>
+            <Text className="font-semibold tracking-wide mb-3 text-lg">
+              Bin type not recognized.
+            </Text>
+            <Text>
+              {" "}
+              {"\n"}Please try again or dispose the item to the best of your
+              knowledge.{" "}
+            </Text>
+          </>
+        );
     }
   };
 
   return (
     <View className="flex-1">
-      {!permission ? (<Loading />) :
-        !permission.granted ? (
-          <RequestPermissionAlert />
-        ) : isFocused ? (
-          <Camera
-            useCamera2Api={Device.brand === 'Apple'}
-            className="flex-1"
-            ratio={screenRatio}
-            type={CameraType.back}
-            autoFocus={Device.brand === 'Apple' ? true : AutoFocus.on}
-            onCameraReady={() => setIsCameraReady(true)}
-            onMountError={(error) => <Error error={error} />}
-            ref={cameraRef}>
-            <View className="flex-1 flex-row bg-transparent justify-between items-end">
-              {
-                isLoading ?
-                  <Loading /> :
-                  !isPreview ?
-                    <CaptureControl /> :
-                    error ? <ProcessingError /> :
-                      prediction ?
-                        <BottomSheet
-                          isVisible={bottomSheetVisible}
-                          onClose={closeBottomSheet}
-                          prediction={prediction}
-                        /> : ''
-              }
-            </View>
-          </Camera>
-        ) : (
-          <Loading />
-        )}
+      {!permission ? (
+        <Loading />
+      ) : !permission.granted ? (
+        <RequestPermissionAlert />
+      ) : isFocused ? (
+        <Camera
+          useCamera2Api={Device.brand === "Apple"}
+          className="flex-1"
+          ratio={screenRatio}
+          type={CameraType.back}
+          autoFocus={Device.brand === "Apple" ? true : AutoFocus.on}
+          onCameraReady={() => setIsCameraReady(true)}
+          onMountError={(error) => <Error error={error} />}
+          ref={cameraRef}>
+          <View className="flex-1 flex-row bg-transparent justify-between items-end">
+            {isLoading ? (
+              <Loading />
+            ) : !isPreview ? (
+              <CaptureControl />
+            ) : error ? (
+              <ProcessingError />
+            ) : prediction ? (
+              <BottomSheet
+                isVisible={bottomSheetVisible}
+                onClose={closeBottomSheet}
+                prediction={prediction}
+              />
+            ) : (
+              ""
+            )}
+          </View>
+        </Camera>
+      ) : (
+        <Loading />
+      )}
     </View>
   );
 }
