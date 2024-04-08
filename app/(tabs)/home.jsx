@@ -43,12 +43,12 @@ import user from "../../assets/user.png";
 import LevelUp from "../(components)/LevelUp";
 
 export default function Tab() {
-  const [visable, setVisable] = useState(false);
-  const [title, setTitle] = useState("Eco Warrior");
+  const [visible, setVisible] = useState(false);
+  const [title, setTitle] = useState(null);
   const [streak, setStreak] = useState(2);
   const [nbrOfScans, setNbrOfScans] = useState(2);
   const [nextLevelScans, setNextLevelScans] = useState(5);
-  const [nextTitle, setNextTitle] = useState("Eco Warrior II");
+  const [nextTitle, setNextTitle] = useState(null);
   const [currentPic, setCurrentPic] = useState(0);
   const [profilePic, setProfilePic] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -90,6 +90,26 @@ export default function Tab() {
     }
     setCouponMap(couponsByStreak[maxKey]);
   }, [streak]);
+
+  const storeData = async (key, value) => {
+    try {
+      await AsyncStorage.setItem(key, value);
+      console.log(`Data stored successfully! Key:${key} Value: ${value}`);
+    } catch (error) {
+      console.log('Error storing data: ', error);
+    }
+  };
+
+  const retrieveData = async () => {
+    try {
+      let value = await AsyncStorage.getItem('@MyStorage:title');
+      if (value === null) value = "Recycling Rookie";
+      console.log(value);
+      setTitle(value);
+    } catch (error) {
+      console.log('Error retrieving data: ', error);
+    }
+  };
 
   const onPressDelete = () => {
     Alert.alert(
@@ -141,15 +161,18 @@ export default function Tab() {
   };
 
   const refreshData = useCallback(() => {
+    retrieveData();
     getNbrOfScans().then((nbrOfScans) => {
       setNbrOfScans(nbrOfScans);
     });
 
     getLevel().then((level) => {
-      if (title !== level.currentTitle) {
-        setVisable(true);
+      if (title !== null && title !== level.currentTitle) {
         setFrom(title);
         setTo(level.currentTitle);
+        setTitle(level.currentTitle);
+        setVisible(true);
+        storeData("@MyStorage:title", title);
       }
       setTitle(level.currentTitle);
       setNextTitle(level.nextTitle);
@@ -187,12 +210,12 @@ export default function Tab() {
       <SafeAreaView className="bg-white">
         <ScrollView>
           <View className="flex flex-col w-screen p-5 bg-white">
-            <LevelUp
-              visable={visable}
-              setVisable={setVisable}
+            {visible && <LevelUp
+              visible={visible}
+              setVisible={setVisible}
               from={from}
               to={to}
-            />
+            />}
             <View
               className={`flex flex-row w-full justify-between items-center ${Platform.OS === "ios" ? "" : "mt-5"}`}>
               <View className="flex-col justify-center mb-1">
