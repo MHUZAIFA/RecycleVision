@@ -244,7 +244,7 @@ export default function CameraScreen() {
     return (
       <View
         className={
-          "bottom-10 justify-between items-center flex-1 flex-row mx-3 w-fit rounded-lg px-3 py-2"
+          "bottom-10 justify-between items-center flex-1 flex-row w-fit rounded-lg mx-5 pr-2 py-2"
         }
         style={{
           backgroundColor: "#D64545",
@@ -255,11 +255,10 @@ export default function CameraScreen() {
           },
           shadowOpacity: 0.25,
           shadowRadius: 3.84,
-
           elevation: 5,
         }}>
-        <Text className="font-semibold text-left text-slate-100 tracking-wide">
-          An error occured while processing image.
+        <Text className="font-semibold ml-4 text-slate-100 tracking-wide">
+          An error occured while processing image
         </Text>
         <TouchableOpacity
           onPress={resetCameraScreen}
