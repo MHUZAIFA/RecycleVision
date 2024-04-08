@@ -3,7 +3,7 @@
     "preview": {
       "android": {
         "buildType": "apk",
-        "image": "your-docker-image"
+        "image": "sdk-50"
       },
       "ios": {
         "simulator": true
