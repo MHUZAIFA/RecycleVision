@@ -15,18 +15,17 @@ import { useCallback, useEffect, useState } from "react";
 import {
   Alert,
   Image,
-  Platform,
   Pressable,
   SafeAreaView,
   ScrollView,
   Text,
   TouchableOpacity,
   View,
+  Platform
 } from "react-native";
 import { PageIndicator } from "react-native-page-indicator";
 import PagerView from "react-native-pager-view";
 import { Bar } from "react-native-progress";
-import LevelUp from "../(components)/LevelUp";
 import LineGraph from "../(components)/LineGraph";
 import PieGraph from "../(components)/PieGraph";
 import SupportBanner from "../(components)/SupportBanner";
@@ -41,6 +40,7 @@ import starbucks_locked from "../../assets/coupons/STARBUCKS_LOCKED.png";
 import walmart from "../../assets/coupons/WALMART.png";
 import walmart_locked from "../../assets/coupons/WALMART_LOCKED.png";
 import user from "../../assets/user.png";
+import LevelUp from "../(components)/LevelUp";
 
 export default function Tab() {
   const [visible, setVisible] = useState(false);
@@ -170,9 +170,8 @@ export default function Tab() {
       if (title !== null && title !== level.currentTitle) {
         setFrom(title);
         setTo(level.currentTitle);
-        setTitle(level.currentTitle);
         setVisible(true);
-        storeData("@MyStorage:title", title);
+        storeData("@MyStorage:title", level.currentTitle);
       }
       setTitle(level.currentTitle);
       setNextTitle(level.nextTitle);
@@ -217,7 +216,7 @@ export default function Tab() {
               to={to}
             />}
             <View
-              className={`flex flex-row w-full justify-between items-center ${Platform.OS === "ios" ? "" : "mt-7"}`}>
+              className={`flex flex-row w-full justify-between items-center ${Platform.OS === "ios" ? "" : "mt-5"}`}>
               <View className="flex-col justify-center mb-1">
                 <Text className="text-xl">Hello 👋</Text>
                 <Text className="text-2xl font-bold">{title}</Text>
@@ -226,7 +225,6 @@ export default function Tab() {
                 className="w-[60px] h-[60px] flex justify-center items-center border-2 rounded-full"
                 onPress={handleImage}>
                 <Image
-                  // @ts-ignore
                   source={profilePic ? { uri: profilePic } : user}
                   className="w-[100%] h-[100%] rounded-full"
                 />
