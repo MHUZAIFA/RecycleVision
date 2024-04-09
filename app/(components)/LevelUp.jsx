@@ -12,36 +12,33 @@ const LevelUp = ({ visible, setVisible, from, to }) => {
 
   const confettiRef = useRef(null);
   const [confettiZIndex, setConfettiZIndex] = useState(10);
-  const [soundObject, setSoundObject] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const triggerConfetti = async () => {
-    setIsLoading(false);
-    setTimeout(() => {
-      setConfettiZIndex(10);
-      confettiRef.current.play();
-      Vibration.vibrate();
-    }, 10);
-
-    setTimeout(() => {
-      setConfettiZIndex(-1);
-    }, 3200);
-  }
 
   const celebrationEffects = async () => {
     try {
+      // play sound
       const { sound } = await Audio.Sound.createAsync(confetti_animation_sound);
-      setSoundObject(sound);
-      await playSound();
-      triggerConfetti();
+      await playSound(sound);
+      // display the confetti
+      setIsLoading(false);
+      setTimeout(() => {
+        setConfettiZIndex(10);
+        confettiRef.current.play();
+        Vibration.vibrate();
+      }, 10);
+
+      setTimeout(() => {
+        setConfettiZIndex(-1);
+      }, 3200);
     } catch (error) {
       console.log('Error loading sound: ', error);
     }
   };
 
-  const playSound = async () => {
+  const playSound = async (sound) => {
     try {
-      await soundObject.replayAsync();
+      await sound.replayAsync();
     } catch (error) {
       console.log('Error playing sound: ', error);
     }
@@ -52,7 +49,7 @@ const LevelUp = ({ visible, setVisible, from, to }) => {
       celebrationEffects();
     }
   }, []);
-  
+
 
   return (
     <Modal
@@ -87,7 +84,7 @@ const LevelUp = ({ visible, setVisible, from, to }) => {
               <Text style={[styles.levelText, { color: PRIMARY }]}>{to}</Text>
             </View>
           </View>
-          <TouchableOpacity style={styles.dismissButton} onPress={() => {setVisible(false); setIsLoading(true);}}>
+          <TouchableOpacity style={styles.dismissButton} onPress={() => { setVisible(false); setIsLoading(true); }}>
             <Text style={styles.dismissText}>Dismiss</Text>
           </TouchableOpacity>
         </View>
@@ -169,3 +166,4 @@ const styles = StyleSheet.create({
 });
 
 export default LevelUp;
+
