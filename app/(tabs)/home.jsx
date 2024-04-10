@@ -166,12 +166,12 @@ export default function Tab() {
       setNbrOfScans(nbrOfScans);
     });
 
-    getLevel().then((level) => {
-      if (title !== null && title !== level.currentTitle) {
+    getLevel().then(async (level) => {
+      if (title !== null && title !== level.currentTitle && !visible) {
         setFrom(title);
         setTo(level.currentTitle);
         setVisible(true);
-        storeData("@MyStorage:title", level.currentTitle);
+        await storeData("@MyStorage:title", level.currentTitle);
       }
       setTitle(level.currentTitle);
       setNextTitle(level.nextTitle);
