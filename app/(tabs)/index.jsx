@@ -24,6 +24,7 @@ import greenBinImagePath from "../../assets/bins/green.png";
 import orangeBinImagePath from "../../assets/bins/orange.png";
 
 import * as Device from "expo-device";
+import BottomSheet from "../(components)/BottomSheet";
 
 export default function CameraScreen() {
   const cameraRef = useRef(null);
@@ -32,8 +33,10 @@ export default function CameraScreen() {
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [isPreview, setIsPreview] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [image, setimage] = useState(null);
   const [prediction, setPrediction] = useState(null);
+  const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
   const isFocused = useIsFocused();
   const navigation = useNavigation();
 
@@ -125,7 +128,7 @@ export default function CameraScreen() {
   };
 
   const processImage = async () => {
-    setIsLoading(true);
+    setIsProcessing(true);
     try {
       const response = await fetch(image.uri);
       const blob = await response.blob();
@@ -135,7 +138,7 @@ export default function CameraScreen() {
       setError("Processing Error\nTry again");
       console.log("Failed Processing", e);
     }
-    setIsLoading(false);
+    setIsProcessing(false);
   };
 
   /**
@@ -294,105 +297,10 @@ export default function CameraScreen() {
     );
   };
 
-  const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
-
   const closeBottomSheet = async () => {
     setBottomSheetVisible(false);
-    resetCameraScreen();
+    await resetCameraScreen();
   };
-
-  const styles = StyleSheet.create({
-    modalOverlay: {
-      flex: 1,
-      justifyContent: "flex-end",
-    },
-    bottomSheet: {
-      backgroundColor: "#ffffff",
-      padding: 20,
-      borderTopLeftRadius: 30,
-      borderTopRightRadius: 30,
-      shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 3.84,
-      elevation: 5,
-      maxHeight: "90%",
-    },
-    bottomSheetTitle: {
-      fontSize: 20,
-      fontWeight: "bold",
-      color: "#373737",
-    },
-    bottomSheetDescription: {
-      fontSize: 15,
-      marginTop: 10,
-    },
-    bottomSheetRecommendation: {
-      fontSize: 20,
-      fontWeight: "bold",
-      color: "#6342E8",
-      marginTop: 10,
-      textTransform: "capitalize",
-    },
-    bottomSuggestedBinTitle: {
-      fontSize: 17,
-      fontWeight: "500",
-      marginTop: 10,
-    },
-    bottomSheetBinDescription: {
-      fontSize: 15,
-    },
-    closeButton: {
-      marginTop: 20,
-      marginBottom: 20,
-      backgroundColor: PRIMARY,
-      alignSelf: "center",
-      width: "100%",
-      padding: 17,
-      borderRadius: 5,
-      shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 3,
-      },
-      shadowOpacity: 0.29,
-      shadowRadius: 4.65,
-
-      elevation: 7,
-    },
-    closeButtonText: {
-      color: "white",
-      fontSize: 15,
-      alignSelf: "center",
-    },
-    bottomSheetBinTitle: {
-      fontSize: 20,
-      fontWeight: "bold",
-      marginRight: 10,
-    },
-    blueBin: {
-      color: "#0077c8",
-    },
-    greenBin: {
-      color: "#228B22",
-    },
-    orangeBin: {
-      color: "orangered",
-    },
-    blackBin: {
-      color: "#171717",
-    },
-    tinyImg: {
-      display: "flex",
-      alignSelf: "flex-end",
-      width: "100%",
-      height: "100%",
-      objectFit: "contain",
-    },
-  });
 
   // Function to render bin title with appropriate color style
   const BinTitle = ({ binType }) => {
@@ -446,7 +354,7 @@ export default function CameraScreen() {
               justifyContent: "center",
               alignItems: "center",
             }}>
-            <Image style={styles.tinyImg} source={binsIconPaths[binType]} />
+            <Image style={styles.binIconImg} source={binsIconPaths[binType]} />
           </View>
         </View>
         <View
@@ -460,47 +368,35 @@ export default function CameraScreen() {
     );
   };
 
-  const BottomSheet = ({ isVisible, onClose, prediction }) => {
+  const BottomSheetContent = (prediction) => {
     const classification = Object.keys(prediction)[0];
-
     const { binType, recyclability } =
       retrieveBinAndRecyclability(classification);
 
     return (
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={isVisible}
-        onRequestClose={onClose}>
-        <TouchableOpacity activeOpacity={1} style={styles.modalOverlay}>
-          <View style={styles.bottomSheet}>
-            {binType ? (
-              <>
-                <Text style={styles.bottomSheetTitle}>
-                  {recyclability}{" "}
-                  <Text
-                    style={{
-                      fontWeight: "500",
-                      textTransform: "capitalize",
-                      color: "#565656",
-                      fontSize: 14,
-                    }}>
-                    ({classification})
-                  </Text>
-                </Text>
-                <BinTitle binType={binType} />
-              </>
-            ) : null}
-
-            <Text style={styles.bottomSheetBinDescription}>
-              {getBinDescription(binType)}
+      <View>
+        {binType ? (
+          <>
+            <Text style={styles.bottomSheetContentTitle}>
+              {recyclability}{" "}
+              <Text
+                style={{
+                  fontWeight: "500",
+                  textTransform: "capitalize",
+                  color: "#565656",
+                  fontSize: 14,
+                }}>
+                ({classification})
+              </Text>
             </Text>
-            <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-              <Text style={styles.closeButtonText}>Done</Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal>
+            <BinTitle binType={binType} />
+          </>
+        ) : null}
+
+        <Text style={styles.bottomSheetBinDescription}>
+          {getBinDescription(binType)}
+        </Text>
+      </View>
     );
   };
 
@@ -677,9 +573,12 @@ export default function CameraScreen() {
               <ProcessingError />
             ) : prediction ? (
               <BottomSheet
-                isVisible={bottomSheetVisible}
+                isBottomSheetVisible = { bottomSheetVisible }
+                setIsBottomSheetVisible = { setBottomSheetVisible }
+                title="Results"
                 onClose={closeBottomSheet}
-                prediction={prediction}
+                content={BottomSheetContent(prediction)}
+                isLoading={isProcessing}
               />
             ) : (
               ""
@@ -692,3 +591,38 @@ export default function CameraScreen() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  bottomSheetContentTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#373737",
+  },
+  bottomSheetBinDescription: {
+    fontSize: 15,
+  },
+  bottomSheetBinTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginRight: 10,
+  },
+  blueBin: {
+    color: "#0077c8",
+  },
+  greenBin: {
+    color: "#228B22",
+  },
+  orangeBin: {
+    color: "orangered",
+  },
+  blackBin: {
+    color: "#171717",
+  },
+  binIconImg: {
+    display: "flex",
+    alignSelf: "flex-end",
+    width: "100%",
+    height: "100%",
+    objectFit: "contain",
+  },
+});

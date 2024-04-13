@@ -51,13 +51,13 @@ const BottomSheet = (
                 <View style={styles.bottomSheet}>
                     {
                         displayHeader && (
-                            <View className="flex flex-row justify-between px-4 pt-5 pb-4 border-b-2 border-zinc-300">
+                            <View className="flex flex-row justify-between mx-4 pt-5 pb-4 border-b-2 border-zinc-300">
                                 <Text style={styles.bottomSheetTitle}>{title}</Text>
                                 {
                                     displayCloseIconBtn &&
                                     (
                                         <TouchableOpacity onPress={onClose} style={styles.closeIconButton}>
-                                            <AntDesign name="close" size={24} color="black" />
+                                            <AntDesign name="close" size={24} color="#373737" />
                                         </TouchableOpacity>
                                     )
                                 }
