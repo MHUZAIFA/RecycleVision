@@ -18,12 +18,9 @@ import {
   View,
 } from "react-native";
 import BarcodeMask from "react-native-barcode-mask";
-import blackBinImagePath from "../../assets/bins/black.png";
-import blueBinImagePath from "../../assets/bins/blue.png";
-import greenBinImagePath from "../../assets/bins/green.png";
-import orangeBinImagePath from "../../assets/bins/orange.png";
-
 import * as Device from "expo-device";
+import BottomSheet from "../(components)/BottomSheet";
+import PredictionResult from "../(components)/PredictionResult";
 
 export default function CameraScreen() {
   const cameraRef = useRef(null);
@@ -32,8 +29,10 @@ export default function CameraScreen() {
   const [isCameraReady, setIsCameraReady] = useState(false);
   const [isPreview, setIsPreview] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [image, setimage] = useState(null);
   const [prediction, setPrediction] = useState(null);
+  const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
   const isFocused = useIsFocused();
   const navigation = useNavigation();
 
@@ -125,7 +124,7 @@ export default function CameraScreen() {
   };
 
   const processImage = async () => {
-    setIsLoading(true);
+    setIsProcessing(true);
     try {
       const response = await fetch(image.uri);
       const blob = await response.blob();
@@ -135,7 +134,7 @@ export default function CameraScreen() {
       setError("Processing Error\nTry again");
       console.log("Failed Processing", e);
     }
-    setIsLoading(false);
+    setIsProcessing(false);
   };
 
   /**
@@ -294,362 +293,9 @@ export default function CameraScreen() {
     );
   };
 
-  const [bottomSheetVisible, setBottomSheetVisible] = useState(false);
-
   const closeBottomSheet = async () => {
     setBottomSheetVisible(false);
-    resetCameraScreen();
-  };
-
-  const styles = StyleSheet.create({
-    modalOverlay: {
-      flex: 1,
-      justifyContent: "flex-end",
-    },
-    bottomSheet: {
-      backgroundColor: "#ffffff",
-      padding: 20,
-      borderTopLeftRadius: 30,
-      borderTopRightRadius: 30,
-      shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.25,
-      shadowRadius: 3.84,
-      elevation: 5,
-      maxHeight: "90%",
-    },
-    bottomSheetTitle: {
-      fontSize: 20,
-      fontWeight: "bold",
-      color: "#373737",
-    },
-    bottomSheetDescription: {
-      fontSize: 15,
-      marginTop: 10,
-    },
-    bottomSheetRecommendation: {
-      fontSize: 20,
-      fontWeight: "bold",
-      color: "#6342E8",
-      marginTop: 10,
-      textTransform: "capitalize",
-    },
-    bottomSuggestedBinTitle: {
-      fontSize: 17,
-      fontWeight: "500",
-      marginTop: 10,
-    },
-    bottomSheetBinDescription: {
-      fontSize: 15,
-    },
-    closeButton: {
-      marginTop: 20,
-      marginBottom: 20,
-      backgroundColor: PRIMARY,
-      alignSelf: "center",
-      width: "100%",
-      padding: 17,
-      borderRadius: 5,
-      shadowColor: "#000",
-      shadowOffset: {
-        width: 0,
-        height: 3,
-      },
-      shadowOpacity: 0.29,
-      shadowRadius: 4.65,
-
-      elevation: 7,
-    },
-    closeButtonText: {
-      color: "white",
-      fontSize: 15,
-      alignSelf: "center",
-    },
-    bottomSheetBinTitle: {
-      fontSize: 20,
-      fontWeight: "bold",
-      marginRight: 10,
-    },
-    blueBin: {
-      color: "#0077c8",
-    },
-    greenBin: {
-      color: "#228B22",
-    },
-    orangeBin: {
-      color: "orangered",
-    },
-    blackBin: {
-      color: "#171717",
-    },
-    tinyImg: {
-      display: "flex",
-      alignSelf: "flex-end",
-      width: "100%",
-      height: "100%",
-      objectFit: "contain",
-    },
-  });
-
-  // Function to render bin title with appropriate color style
-  const BinTitle = ({ binType }) => {
-    let colorStyle;
-    switch (binType) {
-      case BinType.BLUE:
-        colorStyle = styles.blueBin;
-        break;
-      case BinType.GREEN:
-        colorStyle = styles.greenBin;
-        break;
-      case BinType.Orange:
-        colorStyle = styles.orangeBin;
-        break;
-      case BinType.BLACK:
-        colorStyle = styles.blackBin;
-        break;
-      default:
-        colorStyle = {}; // Default style if bin type not found
-    }
-
-    const binsIconPaths = {
-      green: greenBinImagePath,
-      blue: blueBinImagePath,
-      orange: orangeBinImagePath,
-      black: blackBinImagePath,
-    };
-
-    return (
-      <>
-        <View style={{ display: "flex", flexDirection: "row" }}>
-          <View style={{ display: "flex", flexDirection: "column" }}>
-            <Text
-              style={{
-                fontSize: 14,
-                color: "#808080",
-                marginTop: 10,
-                fontWeight: "400",
-              }}>
-              Place in:
-            </Text>
-            <Text style={[styles.bottomSheetBinTitle, colorStyle]}>
-              <Text style={{ textTransform: "capitalize" }}>{binType}</Text> bin
-            </Text>
-          </View>
-          <View
-            style={{
-              width: 50,
-              height: 50,
-              paddingTop: 10,
-              justifyContent: "center",
-              alignItems: "center",
-            }}>
-            <Image style={styles.tinyImg} source={binsIconPaths[binType]} />
-          </View>
-        </View>
-        <View
-          style={{
-            borderBottomColor: "#D9D9D9",
-            borderBottomWidth: 2,
-            marginVertical: 15,
-          }}
-        />
-      </>
-    );
-  };
-
-  const BottomSheet = ({ isVisible, onClose, prediction }) => {
-    const classification = Object.keys(prediction)[0];
-
-    const { binType, recyclability } =
-      retrieveBinAndRecyclability(classification);
-
-    return (
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={isVisible}
-        onRequestClose={onClose}>
-        <TouchableOpacity activeOpacity={1} style={styles.modalOverlay}>
-          <View style={styles.bottomSheet}>
-            {binType ? (
-              <>
-                <Text style={styles.bottomSheetTitle}>
-                  {recyclability}{" "}
-                  <Text
-                    style={{
-                      fontWeight: "500",
-                      textTransform: "capitalize",
-                      color: "#565656",
-                      fontSize: 14,
-                    }}>
-                    ({classification})
-                  </Text>
-                </Text>
-                <BinTitle binType={binType} />
-              </>
-            ) : null}
-
-            <Text style={styles.bottomSheetBinDescription}>
-              {getBinDescription(binType)}
-            </Text>
-            <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-              <Text style={styles.closeButtonText}>Done</Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      </Modal>
-    );
-  };
-
-  // Define enum for bin types
-  const BinType = {
-    BLUE: "blue",
-    GREEN: "green",
-    Orange: "orange",
-    BLACK: "black",
-  };
-
-  // Define enum for recyclability
-  const Recyclability = {
-    RECYCLABLE: "Recyclable",
-    NON_RECYCLABLE: "Non Recyclable",
-  };
-
-  // Define dictionary with bin types, recyclability, and corresponding items
-  const binItems = {
-    [BinType.BLUE]: {
-      items: ["paper", "cardboard", "glass"],
-      recyclability: Recyclability.RECYCLABLE,
-    },
-    [BinType.GREEN]: {
-      items: ["plastic", "metal"],
-      recyclability: Recyclability.RECYCLABLE,
-    },
-    [BinType.Orange]: {
-      items: ["organics"],
-      recyclability: Recyclability.RECYCLABLE,
-    },
-    [BinType.BLACK]: {
-      items: ["trash"],
-      recyclability: Recyclability.NON_RECYCLABLE,
-    },
-  };
-
-  // Function to retrieve bin type and recyclability for an item
-  // return type: { binType: "blue", recyclability: "recyclable" }
-  const retrieveBinAndRecyclability = (item) => {
-    for (const binType in binItems) {
-      if (binItems[binType].items.includes(item.toLowerCase())) {
-        return { binType, recyclability: binItems[binType].recyclability };
-      }
-    }
-    return { binType: null, recyclability: null }; // Return null if item not classified
-  };
-
-  const getBinDescription = (binType) => {
-    switch (binType) {
-      case "blue":
-        return (
-          <>
-            <Text style={{ width: "100%", lineHeight: 25 }}>
-              Blue bin is designated for recyclable waste.{"\n"}Items that are
-              commonly placed in blue bins are:{"\n"}
-            </Text>
-            <View>
-              {[
-                "Paper",
-                "Cardboard",
-                "Glass bottles and jars",
-                "Milk and juice cartons",
-              ].map((item, index) => (
-                <View style={{ marginTop: 10 }} key={index}>
-                  <Text key={index}>{`\u2043 ${item}`}</Text>
-                </View>
-              ))}
-            </View>
-          </>
-        );
-      case "green":
-        return (
-          <>
-            <Text>
-              Green bin is designated for items that can be recycled. {"\n"}
-              {"\n"}This includes:{"\n"}
-            </Text>
-            <View>
-              {[
-                "Metal cans and foil",
-                "Plastic containers with recycling symbols #1 to #7",
-                "Plastic bottles with recycling symbols #1 to #7",
-              ].map((item, index) => (
-                <View style={{ marginTop: 10 }} key={index}>
-                  <Text key={index}>{`\u2043 ${item}`}</Text>
-                </View>
-              ))}
-            </View>
-          </>
-        );
-      case "orange":
-        return (
-          <>
-            <Text>
-              Orange bin is designated for organic waste or compostable
-              materials. {"\n"}
-              {"\n"}This includes:{"\n"}
-            </Text>
-            <View>
-              {["Organics", "Leaves", "Small branches", "Grass clippings"].map(
-                (item, index) => (
-                  <View style={{ marginTop: 10 }} key={index}>
-                    <Text key={index}>{`\u2043 ${item}`}</Text>
-                  </View>
-                )
-              )}
-            </View>
-          </>
-        );
-      case "black":
-        return (
-          <>
-            <Text style={{ width: "100%" }}>
-              Black bin is designated for non recyclable waste.{"\n"}
-              {"\n"}Items that are commonly placed in black bins are:{"\n"}
-            </Text>
-            <View>
-              {[
-                "Food scraps",
-                "Diapers, sanitary products",
-                "Broken household items that can't be recycled",
-                "Polystyrene foam",
-              ].map((item, index) => (
-                <View style={{ marginTop: 10 }} key={index}>
-                  <Text
-                    key={index}
-                    style={{ textTransform: "capitalize", width: "100%" }}>
-                    {`\u2043 ${item}`}
-                  </Text>
-                </View>
-              ))}
-            </View>
-          </>
-        );
-      default:
-        return (
-          <>
-            <Text className="font-semibold tracking-wide mb-3 text-lg">
-              Bin type not recognized.
-            </Text>
-            <Text>
-              {" "}
-              {"\n"}Please try again or dispose the item to the best of your
-              knowledge.{" "}
-            </Text>
-          </>
-        );
-    }
+    await resetCameraScreen();
   };
 
   return (
@@ -675,14 +321,16 @@ export default function CameraScreen() {
               <CaptureControl />
             ) : error ? (
               <ProcessingError />
-            ) : prediction ? (
+            ) : prediction && (
               <BottomSheet
-                isVisible={bottomSheetVisible}
+                isBottomSheetVisible = { bottomSheetVisible }
+                setIsBottomSheetVisible = { setBottomSheetVisible }
+                title="Results"
+                displayHeader= {false}
                 onClose={closeBottomSheet}
-                prediction={prediction}
+                content={PredictionResult(prediction)}
+                isLoading={isProcessing}
               />
-            ) : (
-              ""
             )}
           </View>
         </Camera>
