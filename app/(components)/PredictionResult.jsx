@@ -257,6 +257,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontWeight: "bold",
         color: "#373737",
+        marginTop: 5
     },
     bottomSheetBinDescription: {
         fontSize: 15,

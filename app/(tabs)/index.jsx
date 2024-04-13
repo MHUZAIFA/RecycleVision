@@ -134,9 +134,7 @@ export default function CameraScreen() {
       setError("Processing Error\nTry again");
       console.log("Failed Processing", e);
     }
-    setTimeout(() => {
-      setIsProcessing(false);
-    }, 2000);
+    setIsProcessing(false);
   };
 
   /**
