@@ -134,7 +134,9 @@ export default function CameraScreen() {
       setError("Processing Error\nTry again");
       console.log("Failed Processing", e);
     }
-    setIsProcessing(false);
+    setTimeout(() => {
+      setIsProcessing(false);
+    }, 2000);
   };
 
   /**
@@ -326,6 +328,7 @@ export default function CameraScreen() {
                 isBottomSheetVisible = { bottomSheetVisible }
                 setIsBottomSheetVisible = { setBottomSheetVisible }
                 title="Results"
+                displayHeader= {false}
                 onClose={closeBottomSheet}
                 content={PredictionResult(prediction)}
                 isLoading={isProcessing}
