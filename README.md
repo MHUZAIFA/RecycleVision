@@ -1,13 +1,18 @@
-# RecycleVision: SOEN 6751 HCI Course Project
+# Recycle Vision
 
 ## Table of Contents
-
-1. Introduction
-2. Features
-3. Installation
-4. Usage
-5. Contributing
-6. License
+- [Introduction](#introduction)
+- [Features](#features)
+- [Design](#design)
+- [Screenshots](#screenshots)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Build](#build)
+- [Contributors](#contributors)
+- [Contributing](#contributing)
+- [License](#license)
+- [Acknowledgements](#acknowledgements)
 
 ## Introduction
 
@@ -25,42 +30,61 @@ The RecycleVision application offers the following features:
 
 4. **Environmental Awareness**: The application aims to increase user's environmental awareness. It tracks the user's waste sorting practices before and after using the application, providing insights into their contribution to broader environmental practices.
 
-## Installation
+## Design
+For a comprehensive look at the design and user interface of this project, refer to our [Figma board](https://www.figma.com/file/UeeC6DDHtul2s2l4GV6J5Q/RecycleVision?type=design&node-id=984%3A542&mode=dev&t=IVVyrULoeEK5W3Cc-1). Here, you will find all the design resources that guide the development of the project.
+
+## Screenshots
+
+![Screenshot 1](screenshots/Recycle_Vision_UI.png)
+*RECYCLE VISION  GUI*
+
+## Getting Started
+
+### Prerequisites
+
+Make sure you have Node and Yarn installed on your system. If not, download and install it from [nodejs.org](https://nodejs.org/en) [yarnpkg.com](https://classic.yarnpkg.com/en/).
+
+### Installation
 
 First, install the dependencies of RecycleVision:
 
 ```bash
-npm i
+yarn install
 ```
 
 Second, run the development server using one of the following commands:
 
 ```bash
-npm run start
-```
-
-```bash
-npm run clean
-```
-
-```bash
-npm run fix
-```
-
-```bash
-npm run android
-```
-
-```bash
-npm run ios
-```
-
-```bash
-npm run web
+npm start
 ```
 
 ## Build
-
+To generate the apk.
 ```bash
 eas build -p android --profile preview
 ```
+## Contributors
+
+Thank you to the following contributors for their valuable contributions to the project:
+
+- [Huzaifa Anjum](https://github.com/huzaifafcrit)
+- [Shafiq Imtiaz](https://github.com/shafiqimtiaz)
+- [Abderraouf Drine](https://github.com/AbderraoufDrine)
+- [Peter Sakr](https://github.com/plsakr)
+- [Vithu](https://github.com/DevV2M)
+- [Anirudh Boddu](https://github.com/AnirudhBoddu)
+
+Your efforts are greatly appreciated! 🙌
+
+## Contributing
+
+We welcome contributions! If you would like to contribute to Recycle Vision, please read our [contribution guidelines](CONTRIBUTING.md).
+
+## License
+
+This project is licensed under the [MIT License](LICENSE). See the [LICENSE](LICENSE) file for details.
+
+## Acknowledgements
+
+- A big thanks to the React Native Web development community for making Recycle Vision possible.
+- Special thanks to our Professor [Mr. Anil Ufuk Batmaz](ufuk.batmaz@concordia.ca) for his guidance and support.
